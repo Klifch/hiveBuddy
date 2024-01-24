@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hive Data Page</title>
+    <!-- Add the necessary JavaScript libraries for WebSocket -->
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>-->
+<!--    <script-->
+<!--            src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"-->
+<!--            integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g=="-->
+<!--            crossorigin="anonymous"-->
+<!--            referrerpolicy="no-referrer"-->
+<!--    ></script>-->
+
+</head>
+<body>
+
+<h1>HIVE DATA PAGE</h1>
+<hr>
+
+<!--<div th:if="${theDevice}">-->
+<!--    <p th:text="'Name: ' + ${theDevice.deviceName}"></p>-->
+<!--    <p id="serial1" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}"></p>-->
+<!--    <input id="serial" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}" />-->
+<!--    <p th:text="'User: ' + ${theDevice.user.username}"></p>-->
+<!--</div>-->
+
+<input id="serial" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}" style="display: none;" />
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+
+
+<script>
+
+    var stompClient = null;
+
+    function connect () {
+        var socket = new SockJS("http://localhost:8080/ws-message");
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            // stompClient.subscribe("/topic/message", function (sensorData) { //testData commented to test uncomment order 1
+            stompClient.subscribe("/user/specific", function (sensorData) { //testData
+                show(JSON.parse(sensorData.body));
+                // var data = JSON.parse(sensorData.body);
+                // console.log(data)
+                // updateSensorData(data);
+            });
+            // Enable the "Send" button after successful connection
+            $("#send").prop("disabled", false);
+
+        });
+    }
+
+    function disconnect() {
+        stompClient.deactivate();
+
+        stompClient = null;
+
+        console.log("Disconnected");
+    }
+
+    // function show(sensorData) {
+    //     var response = document.getElementById('data');
+    //     var p = document.createElement('p');
+    //     p.innerHTML = "data s1: " + sensorData.sensor1;
+    //     response.appendChild(p);
+    // }
+
+    // function sendName() {
+    //     stompClient.send(
+    //         "/app/testData",
+    //         {},
+    //         JSON.stringify({ name: $("#name").val() })
+    //     );
+    // }
+
+    function sendName() {
+        if (stompClient) {
+            var serialValue = $("#serial").val();
+
+            stompClient.send(
+                "/app/private",
+                {},
+                JSON.stringify({ name: serialValue })
+            );
+        } else {
+            console.error("Stomp client is not initialized.");
+        }
+    }
+
+    function sendStop() {
+        if (stompClient) {
+            stompClient.send(
+                "/app/private"
+            )
+        }
+    }
+
+    // function updateList(sensors) {
+    //     const sensorsList = $('#sensorData')
+    //     sensorsList.empty();
+    //
+    //     sensors.forEach(sensor => {
+    //         const listItem = $('<li>').text(`Sensor1: ${sensor.}`);
+    //     })
+    // }
+
+
+    // function show(message) {
+    //     let res = message[0];
+    //     // $("#sensorData").append("<p>" + ${res.sensor1} + " - " + ${res.sensor2} + "</p>");
+    //     $("#sensorData").append("<p>").text(`Sensor1: ${res.sensor1}`);
+    //     // var response = document.getElementById('data');
+    //     // var p = document.createElement('p');
+    //     // p.innerHTML = "data s1: " + sensorData.sensor1;
+    //     // response.appendChild(p);
+    // }
+
+    function show(message) {
+        $("#sensorData").text(
+            `<p>Sensor1: ${message.sensor1}, Sensor2: ${message.sensor2}, Sensor3: ${message.sensor3}, Sensor4: ${message.sensor4}, Sensor5: ${message.sensor5}</p>`
+        );
+    }
+
+    $(function () {
+        $("form").on("submit", function (e) {
+            e.preventDefault();
+        });
+        $("#connect").click(function () {
+            connect();
+        });
+        $("#disconnect").click(function () {
+            disconnect();
+        });
+        $("#send").click(function () {
+            sendName();
+        });
+    });
+
+    function updateSensorData(data) {
+        var sensorDataElement = document.getElementById("sensorData");
+        sensorDataElement.innerHTML = '<p>Temperature: ' + data.sensor1 + '</p>' +
+            '<p>Humidity: ' + data.sensor1 + '</p>' +
+            '<p>Other Data: ' + data.sensor3 + '</p>';
+    }
+</script>
+
+<label for="connect">WebSocket connection:</label>
+<button id="connect" class="btn btn-default" type="submit">
+    Connect
+</button>
+
+<label for="disconnect">Disconnect and return:</label>
+<button id="disconnect" class="btn btn-default" type="submit">
+    Disconnect
+</button>
+
+<div class="col-md-6">
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="name">What is your name?</label>
+            <input
+                    type="text"
+                    id="name"
+                    class="form-control"
+                    placeholder="Your name here..."
+            />
+        </div>
+        <button id="send" class="btn btn-default" type="submit">
+            Send
+        </button>
+    </form>
+</div>
+
+<div id="sensorData1">
+    <p id="sensorData"></p>
+</div>
+
+<!-- Display area for the latest data from WebSocket -->
+<!--<div id="latestDataContainer">-->
+
+<!--    <div th:if="${session.latestData}">-->
+<!--        <p th:text="'Latest Data: ' + ${session.latestData.sensor1}"></p>-->
+<!--        &lt;!&ndash; Add additional lines as needed based on your SensorData structure &ndash;&gt;-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<script>-->
+<!--    var socket = new SockJS('/websocket-endpoint');-->
+<!--    var stompClient = Stomp.over(socket);-->
+
+<!--    stompClient.connect({}, function (frame) {-->
+<!--        console.log('Connected: ' + frame);-->
+<!--        stompClient.subscribe('/topic/latestData', function (latestData) {-->
+<!--            console.log('Received latest data: ' + latestData.body);-->
+<!--            // Update your webpage with the received latest data-->
+<!--            updateWebpage(JSON.parse(latestData.body));-->
+<!--        });-->
+
+<!--        // Request the latest data when connected-->
+<!--        stompClient.send("/app/update", {}, {});-->
+<!--    });-->
+
+<!--    function updateWebpage(data) {-->
+<!--        // Add your logic to update the HTML content-->
+<!--        // For example, update a div with id "latestDataContainer"-->
+<!--        document.getElementById('latestDataContainer').innerText = JSON.stringify(data, null, 2);-->
+<!--    }-->
+<!--</script>-->
+
+</body>
+</html>
