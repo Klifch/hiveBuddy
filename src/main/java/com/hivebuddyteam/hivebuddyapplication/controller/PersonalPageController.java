@@ -1,6 +1,6 @@
 package com.hivebuddyteam.hivebuddyapplication.controller;
 
-import com.hivebuddyteam.hivebuddyapplication.controller.apiDTO.DeviceDto;
+import com.hivebuddyteam.hivebuddyapplication.dto.DeviceDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;

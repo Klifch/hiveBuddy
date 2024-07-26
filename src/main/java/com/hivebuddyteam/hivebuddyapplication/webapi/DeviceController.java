@@ -1,8 +1,7 @@
-package com.hivebuddyteam.hivebuddyapplication.controller;
+package com.hivebuddyteam.hivebuddyapplication.webapi;
 
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

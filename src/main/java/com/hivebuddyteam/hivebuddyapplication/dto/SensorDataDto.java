@@ -1,4 +1,4 @@
-package com.hivebuddyteam.hivebuddyapplication.controller.apiDTO;
+package com.hivebuddyteam.hivebuddyapplication.dto;
 
 import java.math.BigDecimal;
 

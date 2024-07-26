@@ -1,45 +1,23 @@
 package com.hivebuddyteam.hivebuddyapplication.controller;
 
-import com.hivebuddyteam.hivebuddyapplication.configuration.security.securityDTO.WebUser;
-import com.hivebuddyteam.hivebuddyapplication.controller.apiDTO.SensorDataDto;
+import com.hivebuddyteam.hivebuddyapplication.dto.SensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
-import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
 import com.hivebuddyteam.hivebuddyapplication.service.SensorDataService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @Controller
 public class WebSocketController {

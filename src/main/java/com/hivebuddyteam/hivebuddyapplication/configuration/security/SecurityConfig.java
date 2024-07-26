@@ -20,7 +20,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // authernticationProvider bean
+    // authenticationProvider bean
     @Bean
     public DaoAuthenticationProvider authenticationProvider(UserService userService) {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .formLogin(form ->
                         form
                                 .loginPage("/showLogin") // our custom login page
-                                .loginProcessingUrl("/authenticateTheUser") // free processor from Spring security
+                                .loginProcessingUrl("/authenticateTheUser") // free processor from Spring security -> we can use it to configure UsernamePasswordAuthenticationFilter
                                 .successHandler(customAuthenticationSuccessHandler) // execute successHandler for each successful login
                                 .permitAll()
                         )

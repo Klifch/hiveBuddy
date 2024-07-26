@@ -1,6 +1,6 @@
 package com.hivebuddyteam.hivebuddyapplication.service;
 
-import com.hivebuddyteam.hivebuddyapplication.controller.apiDTO.SensorDataDto;
+import com.hivebuddyteam.hivebuddyapplication.dto.SensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
 import com.hivebuddyteam.hivebuddyapplication.repository.SensorDataRepository;

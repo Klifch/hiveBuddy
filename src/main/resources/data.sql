@@ -36,12 +36,12 @@
 --                                                                     ('user1', 'test123', true, 1), -- hashed version of 'password1' $2a$10$S2xwT5bGpiDBEiQpD3mK5u13n5gC7NWn8iysC4HTOHfxlmld9/RZu'
 --                                                                     ('user2', '$2a$10$6A/AXI59sy4rSdaz4PEUbOHXte9.VdsRYp2th0RXO6b0YnHsWZw5a', true, 1), -- hashed version of 'password2'
 --                                                                     ('user3', '$2a$10$3TRQRu9tZ2gjmlFJTHcX9u1Wb1e5pIzE8RnZSDENwPU3J9cKo.5Oy', true, 1); -- hashed version of 'password3'
-
+--  12qw - susan password
 INSERT INTO users (username, password, enabled)
 VALUES
     ('john', '$2a$12$Y7u0QoZa.cRdilgjNe5YluEjqXLMcFISOQKkrr3YV8gl/GMAHMHJe', true),
-    ('mary', '$2a$12$58FHGojC3BTlHS/jq04yGeXyN9ZXkyUbWSEaRhdVSuMGg0SKQoZAy', true),
-    ('susan', '$2a$12$58FHGojC3BTlHS/jq04yGeXyN9ZXkyUbWSEaRhdVSuMGg0SKQoZAy', true);
+    ('mary', '$2a$10$gHL4quzbc6QEsLi5ppz2T.tlW2./eSBKwpyirHNF1tSmndDZzr04C', true),
+    ('susan', '$2a$10$gHL4quzbc6QEsLi5ppz2T.tlW2./eSBKwpyirHNF1tSmndDZzr04C', true);
 
 INSERT INTO roles (name)
 VALUES

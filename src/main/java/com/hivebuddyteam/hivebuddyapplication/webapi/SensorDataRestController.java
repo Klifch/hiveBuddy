@@ -1,6 +1,6 @@
-package com.hivebuddyteam.hivebuddyapplication.controller;
+package com.hivebuddyteam.hivebuddyapplication.webapi;
 
-import com.hivebuddyteam.hivebuddyapplication.controller.apiDTO.SensorDataDto;
+import com.hivebuddyteam.hivebuddyapplication.dto.SensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
 import com.hivebuddyteam.hivebuddyapplication.service.SensorDataService;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,6 @@ public class SensorDataRestController {
 
     @GetMapping("/sensors")
     public List<SensorData> showData() {
-
         return sensorDataService.getAll();
     }
 

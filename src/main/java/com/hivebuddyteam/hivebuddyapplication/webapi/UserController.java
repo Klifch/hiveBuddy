@@ -1,16 +1,14 @@
-package com.hivebuddyteam.hivebuddyapplication.controller;
+package com.hivebuddyteam.hivebuddyapplication.webapi;
 
 import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.service.UserService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-//@Controller
-//@RequestMapping("/user")
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
