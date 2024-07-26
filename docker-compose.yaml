@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:16.1-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: 'beehive'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'spring'
+    ports:
+      - '5435:5432'

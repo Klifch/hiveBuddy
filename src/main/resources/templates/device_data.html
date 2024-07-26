@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Mobile Menu -->
+                         Mobile Menu
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>
                         </div>
@@ -89,7 +89,6 @@
                     <div class="col-xl-8 col-lg-9 col-md-12 ">
                         <div class="hero__caption hero__caption3 text-center">
                             <h1 th:text="'Check your data, ' + ${session.user.username} + '!'" data-animation="fadeInLeft" data-delay=".6s "></h1>
-<!--                            <input id="serial" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}" style="display: none;" />-->
                         </div>
                     </div>
                 </div>
@@ -103,27 +102,14 @@
 
 
 
-
-<!--<div th:if="${theDevice}">-->
-<!--    <p th:text="'Name: ' + ${theDevice.deviceName}"></p>-->
-<!--    <p id="serial1" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}"></p>-->
-<!--    <input id="serial" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}" />-->
-<!--    <p th:text="'User: ' + ${theDevice.user.username}"></p>-->
-<!--</div>-->
     <a th:text="'HiveID: '"></a>
     <input id="serial" th:value="${theDevice.serialNumber}" th:text="${theDevice.serialNumber}" style="display: none; color: white;" />
-<!--    <label id="serial" th:text="${theDevice.serialNumber}"></label>-->
 
 
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
 
-
-<!--<label for="connect">WebSocket connection:</label>-->
-<!--<button id="connect" class="btn btn-default" type="submit">Connect</button>-->
-<!--<button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect-->
-<!--</button>-->
 
 
 <script>
@@ -188,10 +174,6 @@
 
 
     function show(message) {
-        // $("#sensorData").text(
-        //     `Sensor1: ${message.sensor1}, Sensor2: ${message.sensor2}, Sensor3: ${message.sensor3}, Sensor4: ${message.sensor4}, Sensor5: ${message.sensor5}`
-        // );
-
         $("#sensor1").text(`${message.sensor1}`);
         $("#sensor2").text(`${message.sensor2}`);
         $("#sensor3").text(`${message.sensor3}`);
@@ -301,27 +283,6 @@
         </div>
     </section>
 
-
-<!--<div class="col-md-6">-->
-<!--    <form class="form-inline">-->
-<!--        <div class="form-group">-->
-<!--            <label for="name">What is your name?</label>-->
-<!--            <input-->
-<!--                    type="text"-->
-<!--                    id="name"-->
-<!--                    class="form-control"-->
-<!--                    placeholder="Your name here..."-->
-<!--            />-->
-<!--        </div>-->
-<!--        <button id="send" class="btn btn-default" type="submit">-->
-<!--            Send-->
-<!--        </button>-->
-<!--    </form>-->
-<!--</div>-->
-
-<!--<div id="sensorData1">-->
-<!--    <p id="sensorData"></p>-->
-<!--</div>-->
 
 </main>
 <footer>
