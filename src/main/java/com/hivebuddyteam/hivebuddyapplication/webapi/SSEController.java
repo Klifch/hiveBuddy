@@ -52,15 +52,15 @@ public class SSEController {
         subscriptions.put(subscriptionName, subscription);
 
         sseEmitter.onCompletion(() -> {
-            scheduler.shutdown();
+            scheduler.shutdownNow();
             subscriptions.remove(subscriptionName);
         });
         sseEmitter.onTimeout(() -> {
-            scheduler.shutdown();
+            scheduler.shutdownNow();
             subscriptions.remove(subscriptionName);
         });
         sseEmitter.onError((e) -> {
-            scheduler.shutdown();
+            scheduler.shutdownNow();
             subscriptions.remove(subscriptionName);
         });
 
@@ -69,9 +69,11 @@ public class SSEController {
                 sseEmitter.send("we got info from " + subscriptionName);
                 System.out.println("Event sent for - " + subscriptionName);
             } catch (Exception e) {
+                System.out.println("Error sending info for - " + subscriptionName);
                 sseEmitter.completeWithError(e);
             }
-        }, 0, 500, TimeUnit.MILLISECONDS);
+            System.out.println("Scheduler still alive");
+        }, 5000, 1000, TimeUnit.MILLISECONDS);
 
 
         return sseEmitter;
@@ -89,12 +91,19 @@ public class SSEController {
             @RequestParam("deviceSerial") String deviceSerial,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
+        System.out.println("Unsubscribing " + userDetails.getUsername());
         String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
         UpdatesSubscription subscription = subscriptions.get(subscriptionName);
 
-        subscription.getScheduler().shutdown();
+//        subscription.getScheduler().close();
+        subscription.getScheduler().shutdownNow();
+        System.out.println("Scheduler shut down");
         subscription.getEmitter().complete();
+        System.out.println("Emitter completed");
 
+        subscriptions.remove(subscriptionName);
+
+        System.out.println(subscriptions.size());
         return ResponseEntity.status(HttpStatus.OK).body("Done!");
     }
 

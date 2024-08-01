@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +72,19 @@ public class PersonalPageController {
         logger.info("Returning view --> device_hive_data");
 
         return "device_data";
+    }
+
+    @GetMapping("/hiveData")
+    public String showHiveData(
+            @AuthenticationPrincipal UserDetails user,
+            @RequestParam("deviceId") Integer id,
+            Model model
+    ) {
+        logger.info("Received get request /showHiveData");
+
+        // some code here
+
+        return "hive_data";
     }
 
     @GetMapping("/personalHome")
