@@ -1,13 +1,12 @@
 package com.hivebuddyteam.hivebuddyapplication.webapi;
 
 import com.hivebuddyteam.hivebuddyapplication.domain.UpdatesSubscription;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
@@ -76,6 +75,27 @@ public class SSEController {
 
 
         return sseEmitter;
+    }
+
+    // It's a test, should be POST
+    // Should have tests :
+    //      - does subscription exist?
+    //      - can we shut down?
+    //      - add try catch;
+    //      - check for open threads and make cleaning if needed;
+
+    @GetMapping("/unsubscribe")
+    public ResponseEntity<String> unsubscribe (
+            @RequestParam("deviceSerial") String deviceSerial,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
+        UpdatesSubscription subscription = subscriptions.get(subscriptionName);
+
+        subscription.getScheduler().shutdown();
+        subscription.getEmitter().complete();
+
+        return ResponseEntity.status(HttpStatus.OK).body("Done!");
     }
 
 
