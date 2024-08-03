@@ -1,6 +1,10 @@
 package com.hivebuddyteam.hivebuddyapplication.webapi;
 
+import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
 import com.hivebuddyteam.hivebuddyapplication.domain.UpdatesSubscription;
+import com.hivebuddyteam.hivebuddyapplication.dto.SensorDataDto;
+import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
+import com.hivebuddyteam.hivebuddyapplication.service.SensorDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +20,18 @@ import java.util.concurrent.*;
 @RequestMapping("/api/sse")
 public class SSEController {
 
+    private final SensorDataService sensorDataService;
+    private final DeviceService deviceService;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private Map<String, UpdatesSubscription> subscriptions = new ConcurrentHashMap<>();
+
+    public SSEController(
+            SensorDataService sensorDataService,
+            DeviceService deviceService
+    ) {
+        this.sensorDataService = sensorDataService;
+        this.deviceService = deviceService;
+    }
 
     @GetMapping("/stream")
     public SseEmitter streamSseEvents(@AuthenticationPrincipal UserDetails userDetails) {
@@ -66,7 +80,10 @@ public class SSEController {
 
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                sseEmitter.send("we got info from " + subscriptionName);
+                SensorData sensorData = sensorDataService.findLatestByDevice(deviceService.findBySerial(deviceSerial));
+                SensorDataDto sensorDataDto = SensorDataDto.mapToDto(deviceSerial, sensorData);
+//                sseEmitter.send("we got info from " + subscriptionName);
+                sseEmitter.send(sensorDataDto);
                 System.out.println("Event sent for - " + subscriptionName);
             } catch (Exception e) {
                 System.out.println("Error sending info for - " + subscriptionName);
@@ -95,7 +112,6 @@ public class SSEController {
         String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
         UpdatesSubscription subscription = subscriptions.get(subscriptionName);
 
-//        subscription.getScheduler().close();
         subscription.getScheduler().shutdownNow();
         System.out.println("Scheduler shut down");
         subscription.getEmitter().complete();

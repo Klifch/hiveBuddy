@@ -1,5 +1,7 @@
 package com.hivebuddyteam.hivebuddyapplication.dto;
 
+import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
+
 import java.math.BigDecimal;
 
 public class SensorDataDto {
@@ -26,6 +28,17 @@ public class SensorDataDto {
         this.sensor3 = sensor3;
         this.sensor4 = sensor4;
         this.sensor5 = sensor5;
+    }
+
+    public static SensorDataDto mapToDto(String serialNumber, SensorData sensorData) {
+        return new SensorDataDto(
+                serialNumber,
+                sensorData.getSensor1(),
+                sensorData.getSensor2(),
+                sensorData.getSensor3(),
+                sensorData.getSensor4(),
+                sensorData.getSensor5()
+        );
     }
 
     public String getSerialNumber() {

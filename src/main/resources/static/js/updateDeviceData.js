@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     var source = new EventSource("/api/sse/subscribe?deviceSerial=asdf4");
     source.onmessage = function (event) {
-        console.log("Received event: " + event.data);
+        const data = JSON.parse(event.data);
+        console.log(`Received event: ${data.serialNumber} and ${data.sensor1}`);
     }
 });
 
