@@ -112,7 +112,7 @@
                             <h4 th:text="${device.deviceName}"></h4>
                         </div>
                         <div class="card-bottom">
-                            <a href="#" class="borders-btn" th:href="@{/showHiveDetails(deviceId=${device.deviceId})}">Check Hive</a>
+                            <a href="#" class="borders-btn" th:href="@{/hiveData(deviceSerial=${device.serialNumber})}">Check Hive</a>
                         </div>
                     </div>
                 </div>

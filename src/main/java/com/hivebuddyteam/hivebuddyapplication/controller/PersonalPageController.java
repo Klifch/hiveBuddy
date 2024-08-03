@@ -4,6 +4,7 @@ import com.hivebuddyteam.hivebuddyapplication.dto.DeviceDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
+import com.hivebuddyteam.hivebuddyapplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,59 +23,62 @@ import java.util.List;
 @Controller
 public class PersonalPageController {
 
-    DeviceService deviceService;
+    private final DeviceService deviceService;
+    private final UserService userService;
 
     Logger logger = LoggerFactory.getLogger(PersonalPageController.class);
 
     @Autowired
-    public PersonalPageController(DeviceService deviceService) {
+    public PersonalPageController(DeviceService deviceService, UserService userService) {
         logger.info("DeviceService injected in PersonalPageController ...");
+        this.userService = userService;
         this.deviceService = deviceService;
     }
 
-    @GetMapping("/personalHomeOld")
-    public String showPersonalPage(Model model, HttpSession httpSession) {
+//    @GetMapping("/personalHomeOld")
+//    public String showPersonalPage(Model model, HttpSession httpSession) {
+//
+//        User user = (User) httpSession.getAttribute("user");
+//
+//        if (user == null) {
+//            throw new RuntimeException("User is empty, no list of devices!");
+//            // custom error to add
+//        }
+//
+//        List<Device> devices = deviceService.findAllByUser(user);
+//
+//        model.addAttribute("devices", devices);
+//
+//        return "personal_page";
+//    }
 
-        User user = (User) httpSession.getAttribute("user");
-
-        if (user == null) {
-            throw new RuntimeException("User is empty, no list of devices!");
-            // custom error to add
-        }
-
-        List<Device> devices = deviceService.findAllByUser(user);
-
-        model.addAttribute("devices", devices);
-
-        return "personal_page";
-    }
-
-    @GetMapping("/showHiveDetails")
+    @GetMapping("/hiveData")
     public String showHiveDetails(
-            @RequestParam("deviceId") Integer id,
+            @AuthenticationPrincipal User user,
+            @RequestParam("deviceSerial") String deviceSerial,
             Model model,
             HttpSession httpSession
     ) {
-        logger.info("Received get request /showHiveDetails with id --> {}", id);
-        Device device = deviceService.findById(id);
+        logger.info("Received get request /showHiveDetails with serial --> {}", deviceSerial);
+        Device device = deviceService.findBySerial(deviceSerial);
 
         if (device == null) {
-            logger.warn("No Device with ID -> {} found!", id);
-            throw new RuntimeException("No Device with ID: " + id + " found!");
-            // custom error handling // redirect to oups page!
+            logger.warn("No Device with Serial -> {} found!", deviceSerial);
+            throw new RuntimeException("No Device with Serial: " + deviceSerial + " found!");
+            // TODO: custom error handling // redirect to oups page!
         }
 
         logger.info("Device --> {} added to the model and session", device);
 
         model.addAttribute("theDevice", device);
-        httpSession.setAttribute("device", device);
+        httpSession.setAttribute("device", device); // Wy tf do I need it?
 
         logger.info("Returning view --> device_hive_data");
 
-        return "device_data";
+        return "device_data2";
     }
 
-    @GetMapping("/hiveData")
+    @GetMapping("/hiveDataTest")
     public String showHiveData(
             @AuthenticationPrincipal UserDetails user,
             @RequestParam("deviceId") Integer id,
@@ -87,21 +91,16 @@ public class PersonalPageController {
         return "hive_data";
     }
 
+    // TODO: Why the fuck it is called personal home? Change it!
     @GetMapping("/personalHome")
-    public String showDashBoard(Model model, HttpSession httpSession) {
-
+    public String showDashBoard(
+            @AuthenticationPrincipal UserDetails user,
+            Model model,
+            HttpSession httpSession
+    ) {
         logger.info("Received get request /personalHome");
 
-        User user = (User) httpSession.getAttribute("user");
-
-        if (user == null) {
-            logger.warn("User is empty, no list of devices!");
-            throw new RuntimeException("User is empty, no list of devices!");
-            // custom error to add
-        }
-
-        List<Device> devices = deviceService.findAllByUser(user);
-
+        List<Device> devices = deviceService.findAllByUser(userService.finByUsername(user.getUsername()));
         model.addAttribute("devices", devices);
 
         logger.info("List of devices: {} added to the model", devices);

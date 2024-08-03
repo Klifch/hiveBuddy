@@ -61,6 +61,7 @@ public class SSEController {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         UpdatesSubscription subscription = new UpdatesSubscription(sseEmitter, scheduler);
+        System.out.println("Subscription created!");
         String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
 
         subscriptions.put(subscriptionName, subscription);
@@ -82,9 +83,9 @@ public class SSEController {
             try {
                 SensorData sensorData = sensorDataService.findLatestByDevice(deviceService.findBySerial(deviceSerial));
                 SensorDataDto sensorDataDto = SensorDataDto.mapToDto(deviceSerial, sensorData);
-//                sseEmitter.send("we got info from " + subscriptionName);
                 sseEmitter.send(sensorDataDto);
-                System.out.println("Event sent for - " + subscriptionName);
+                System.out.println(String.format("Number of subs: %d, event sent to %s", subscriptions.size(), subscriptionName));
+//                System.out.println("Event sent for - " + subscriptionName);
             } catch (Exception e) {
                 System.out.println("Error sending info for - " + subscriptionName);
                 sseEmitter.completeWithError(e);
@@ -110,6 +111,7 @@ public class SSEController {
     ) {
         System.out.println("Unsubscribing " + userDetails.getUsername());
         String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
+        System.out.println("Unsubscribing " + subscriptionName);
         UpdatesSubscription subscription = subscriptions.get(subscriptionName);
 
         subscription.getScheduler().shutdownNow();
