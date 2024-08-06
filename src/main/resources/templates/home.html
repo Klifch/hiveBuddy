@@ -26,61 +26,11 @@
     
 </head>
 <body>
-    <!-- ? Preloader Start -->
-    <div id="preloader-active">
-        <div class="preloader d-flex align-items-center justify-content-center">
-            <div class="preloader-inner position-relative">
-                <div class="preloader-circle"></div>
-                <div class="preloader-img pere-text">
-                    <img src="/assets/img/logo/bee-icon.png" alt="">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Preloader Start -->
-    <header>
-        <!-- Header Start -->
-        <div class="header-area header-transparent">
-            <div class="main-header ">
-                <div class="header-bottom  header-sticky">
-                    <div class="container-fluid">
-                        <div class="row align-items-center">
-                            <!-- Logo -->
-                            <div class="col-xl-2 col-lg-2">
-                                <div class="logo">
-                                    <a href="#" th:href="@{/}"><img src="/assets/img/logo/bee-logo.png" alt=""></a>
-                                </div>
-                            </div>
-                            <div class="col-xl-10 col-lg-10">
-                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
-                                    <!-- Main-menu -->
-                                    <div class="main-menu d-none d-lg-block">
-                                        <nav>
-                                            <ul id="navigation">
-                                                <li th:if="${session.user != null}"><a href="#" th:href="@{/personalHome}">My Hives</a></li>
-                                                <li><a href="#" th:href="@{/}">Home</a></li>
-                                                <!-- Button -->
-                                                <li class="button-header margin-left "><a href="#" th:href="@{/register/showRegistration}" class="btn">Sign Up</a></li>
-                                                <li th:if="${session.user == null}" class="button-header"><a href="#" th:href="@{/showLogin}" class="btn3">Sign In</a></li>
-                                                <li th:if="${session.user != null}" class="button-header">
-                                                    <a href="#" th:href="@{/logout}" class="btn3">Log out</a>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div> 
-                            <!-- Mobile Menu -->
-                            <div class="col-12">
-                                <div class="mobile_menu d-block d-lg-none"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Header End -->
-    </header>
+
+    <div id="preloader-active" th:insert="~{fragments/preloader :: preloader}"></div>
+
+    <header th:insert="~{fragments/header :: header}"></header>
+
     <main>
         <!-- Slider Area Start-->
         <div class="slider-area slider-bg ">
@@ -99,7 +49,7 @@
                                     <!-- Slider btn -->
                                     <div class="slider-btns">
                                         <!-- Hero-btn -->
-                                        <a data-animation="fadeInLeft" data-delay="1s" href="#" th:href="@{/showLogin}" class="btn radius-btn">get started</a>
+                                        <a data-animation="fadeInLeft" data-delay="1s" href="#" th:href="@{/login}" class="btn radius-btn">get started</a>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +75,7 @@
                                     <!-- Slider btn -->
                                     <div class="slider-btns">
                                         <!-- Hero-btn -->
-                                        <a data-animation="fadeInLeft" data-delay="1s" href="#" th:href="@{/showLogin}" class="btn radius-btn">get started</a>
+                                        <a data-animation="fadeInLeft" data-delay="1s" href="#" th:href="@{/login}" class="btn radius-btn">get started</a>
                                     </div>
                                 </div>
                             </div>
@@ -421,13 +371,6 @@
                     </div>
                 </div>
             </div>
-<!--            <div class="row">-->
-<!--                <div class="col-xl-12 ">-->
-<!--                    <div class="more-btn text-center mt-20">-->
-<!--                        <a href="#" class="btn">Go to Support</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
         </div>
     </section>
     <!-- End ask questions -->

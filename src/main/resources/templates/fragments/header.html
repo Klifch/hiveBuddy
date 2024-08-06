@@ -1,0 +1,42 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<div th:fragment="header">
+
+        <!-- Header Start -->
+        <div class="header-area header-transparent">
+            <div class="main-header ">
+                <div class="header-bottom  header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <!-- Logo -->
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="#" th:href="@{/}"><img src="/assets/img/logo/bee-logo.png" alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <!-- Main-menu -->
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">
+                                                <li sec:authorize="isAuthenticated()"><a href="#" th:href="@{/personalHome}">My Hives</a></li>
+                                                <li sec:authorize="!isAuthenticated()"><a href="#" th:href="@{/showLogin}">Sign in</a></li>
+                                                <!-- Button -->
+                                                <li sec:authorize="!isAuthenticated()" class="button-header margin-left "><a href="#" th:href="@{/register/showRegistration}" class="btn">Sign Up</a></li>
+                                                <li sec:authorize="isAuthenticated()" class="button-header margin-left "><a href="#" th:href="@{/logout}" class="btn">Log out</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+
+</div>
+</html>

@@ -76,3 +76,9 @@ INSERT INTO sensor_data (device_id, timestamp, sensor1, sensor2, sensor3, sensor
                                                                                                 (2, CURRENT_TIMESTAMP - interval '10' minute, 12.3, 18.9, 17.6, 10.1, 11.9),
                                                                                                 (2, CURRENT_TIMESTAMP - interval '9' minute, 10.7, 20.5, 15.8, 9.5, 12.3),
                                                                                                 (2, CURRENT_TIMESTAMP - interval '8' minute, 11.5, 19.3, 16.7, 8.9, 11.2);
+
+INSERT INTO sensor_data (device_id, timestamp, sensor1, sensor2, sensor3, sensor4, sensor5) VALUES
+                                                                                                (3, CURRENT_TIMESTAMP - interval '10' minute, 10.5, 20.3, 15.7, 8.2, 12.0),
+                                                                                                (3, CURRENT_TIMESTAMP - interval '9' minute, 11.2, 21.1, 14.3, 9.0, 11.5),
+                                                                                                (3, CURRENT_TIMESTAMP - interval '8' minute, 9.8, 19.5, 16.2, 8.7, 12.8);
+

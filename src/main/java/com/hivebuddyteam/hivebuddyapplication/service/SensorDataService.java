@@ -3,6 +3,7 @@ package com.hivebuddyteam.hivebuddyapplication.service;
 import com.hivebuddyteam.hivebuddyapplication.dto.SensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
+import com.hivebuddyteam.hivebuddyapplication.dto.SingleSensorDataDto;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface SensorDataService {
 
     SensorData findLatestByDevice(Device device);
 
+    List<SingleSensorDataDto> getSingleSensorDataWithFrequency(Device device, Integer sensorNumber, Integer minutes, Integer frequency);
 }

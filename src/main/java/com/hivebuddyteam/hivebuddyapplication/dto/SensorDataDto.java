@@ -31,13 +31,24 @@ public class SensorDataDto {
     }
 
     public static SensorDataDto mapToDto(String serialNumber, SensorData sensorData) {
+        if (sensorData == null) {
+            return new SensorDataDto(
+                    serialNumber,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
         return new SensorDataDto(
                 serialNumber,
-                sensorData.getSensor1(),
-                sensorData.getSensor2(),
-                sensorData.getSensor3(),
-                sensorData.getSensor4(),
-                sensorData.getSensor5()
+                sensorData.getSensor1() == null ? BigDecimal.ZERO : sensorData.getSensor1(),
+                sensorData.getSensor2() == null ? BigDecimal.ZERO : sensorData.getSensor2(),
+                sensorData.getSensor3() == null ? BigDecimal.ZERO : sensorData.getSensor3(),
+                sensorData.getSensor4() == null ? BigDecimal.ZERO : sensorData.getSensor4(),
+                sensorData.getSensor5() == null ? BigDecimal.ZERO : sensorData.getSensor5()
         );
     }
 
