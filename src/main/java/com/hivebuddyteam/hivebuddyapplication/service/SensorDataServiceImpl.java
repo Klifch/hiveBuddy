@@ -65,6 +65,7 @@ public class SensorDataServiceImpl implements SensorDataService{
 
     @Override
     public SensorData findLatestByDevice(Device device) {
+
         return sensorDataRepository.findTopByDeviceOrderByTimestampDesc(device);
     }
 
@@ -87,7 +88,9 @@ public class SensorDataServiceImpl implements SensorDataService{
             LocalDateTime intervalEnd = startTime.plusMinutes(i + frequency);
 
             List<SensorData> intervalData = sensorDataList.stream()
-                    .filter(data -> data.getTimestamp().isAfter(intervalStart) && data.getTimestamp().isBefore(intervalEnd))
+                    .filter(
+                            data -> data.getTimestamp().isAfter(intervalStart) && data.getTimestamp().isBefore(intervalEnd)
+                    )
                     .toList();
 
             if (!intervalData.isEmpty()) {
@@ -99,6 +102,67 @@ public class SensorDataServiceImpl implements SensorDataService{
         }
 
         return singleSensorDataDtoList;
+    }
+
+    @Override
+    public List<SensorDataDto> getDeviceSensorDataWithFrequency(Device device, Integer minutes, Integer frequency) {
+        LocalDateTime endTime = LocalDateTime.now();
+        LocalDateTime startTime = endTime.minusMinutes(minutes);
+
+        List<SensorData> sensorDataList = sensorDataRepository.findAllByDeviceAndTimestampBetween(device, startTime, endTime);
+
+        List<SensorDataDto> sensorDataDtoList = new ArrayList<>();
+
+        for (int i = 0; i < minutes; i += frequency) {
+            LocalDateTime intervalStart = startTime.plusMinutes(i);
+            LocalDateTime intervalEnd = startTime.plusMinutes(i + frequency);
+
+            List<SensorData> intervalData = sensorDataList.stream()
+                    .filter(
+                            data -> data.getTimestamp().isAfter(intervalStart) && data.getTimestamp().isBefore(intervalEnd)
+                    )
+                    .toList();
+
+            if (!intervalData.isEmpty()) {
+                BigDecimal averageSensor1 = calculateAverage(intervalData, 1);
+                BigDecimal averageSensor2 = calculateAverage(intervalData, 2);
+                BigDecimal averageSensor3 = calculateAverage(intervalData, 3);
+                BigDecimal averageSensor4 = calculateAverage(intervalData, 4);
+                BigDecimal averageSensor5 = calculateAverage(intervalData, 5);
+
+                SensorDataDto dto = new SensorDataDto(
+                        device.getSerialNumber(),
+                        intervalEnd,
+                        averageSensor1,
+                        averageSensor2,
+                        averageSensor3,
+                        averageSensor4,
+                        averageSensor5
+                );
+
+                sensorDataDtoList.add(dto);
+            }
+        }
+
+        return sensorDataDtoList;
+    }
+
+    @Override
+    public Boolean checkIfAlive(Device device) {
+        SensorData data = findLatestByDevice(device);
+
+        if (data == null) {
+            return false;
+        }
+
+        LocalDateTime lastUpdate = data.getTimestamp();
+        LocalDateTime borderTime = LocalDateTime.now().minusMinutes(1);
+
+        if (lastUpdate == null) {
+            return false;
+        }
+
+        return lastUpdate.isAfter(borderTime);
     }
 
     private BigDecimal calculateAverage(List<SensorData> intervalData, Integer sensorNumber) {

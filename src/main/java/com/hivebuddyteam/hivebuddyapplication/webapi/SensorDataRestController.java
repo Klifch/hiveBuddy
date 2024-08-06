@@ -9,7 +9,6 @@ import com.hivebuddyteam.hivebuddyapplication.service.SensorDataService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,14 +37,13 @@ public class SensorDataRestController {
     }
 
     @GetMapping("/data/sensor/{serial}")
-    public ResponseEntity<List<SingleSensorDataDto>> getSensorData(
+    public ResponseEntity<List<SingleSensorDataDto>> getSingleSensorData(
             @PathVariable String serial,
             @RequestParam("minutes") Integer minutes,
             @RequestParam("sensorNumber") Integer sensorNumber,
-            @RequestParam(value = "average", required = false) Boolean average,
-            @RequestParam(value = "frequency", required = false) Integer frequency
+            @RequestParam("average") Boolean average, // option to add request for data without calculation of averages
+            @RequestParam("frequency") Integer frequency
     ) {
-
         if (sensorNumber > 5) {
             return ResponseEntity.badRequest().build();
         }
@@ -56,17 +54,36 @@ public class SensorDataRestController {
             return ResponseEntity.badRequest().build();
         }
 
-        if (average != null && average && frequency != null) {
-            List<SingleSensorDataDto> dtoList = sensorDataService.getSingleSensorDataWithFrequency(device, sensorNumber, minutes, frequency);
 
-            if (dtoList == null || dtoList.isEmpty()) {
-                return ResponseEntity.ok().body(null);
-            }
+        List<SingleSensorDataDto> dtoList = sensorDataService.getSingleSensorDataWithFrequency(device, sensorNumber, minutes, frequency);
 
-            return ResponseEntity.ok().body(dtoList);
-        } else {
-            return null;
+        if (dtoList == null || dtoList.isEmpty()) {
+            return ResponseEntity.ok().body(null);
         }
+
+        return ResponseEntity.ok().body(dtoList);
+    }
+
+
+    @GetMapping("/data/device/{serial}")
+    public ResponseEntity<List<SensorDataDto>> getDeviceSensorData(
+            @PathVariable String serial,
+            @RequestParam("minutes") Integer minutes,
+            @RequestParam("frequency") Integer frequency
+    ) {
+        Device device = deviceService.findBySerial(serial);
+
+        if (device == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<SensorDataDto> dtoList = sensorDataService.getDeviceSensorDataWithFrequency(device, minutes, frequency);
+
+        if (dtoList == null || dtoList.isEmpty()) {
+            return ResponseEntity.ok().body(null);
+        }
+
+        return ResponseEntity.ok().body(dtoList);
     }
 
 }

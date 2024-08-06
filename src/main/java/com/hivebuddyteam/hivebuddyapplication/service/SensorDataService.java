@@ -18,4 +18,9 @@ public interface SensorDataService {
     SensorData findLatestByDevice(Device device);
 
     List<SingleSensorDataDto> getSingleSensorDataWithFrequency(Device device, Integer sensorNumber, Integer minutes, Integer frequency);
+
+    List<SensorDataDto> getDeviceSensorDataWithFrequency(Device device, Integer minutes, Integer frequency);
+
+    Boolean checkIfAlive(Device device);
+
 }

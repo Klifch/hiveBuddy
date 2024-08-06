@@ -16,5 +16,4 @@ public interface DeviceService {
     List<Device> findAllByUser(User user);
 
     Device save(Device device);
-
 }

@@ -3,10 +3,13 @@ package com.hivebuddyteam.hivebuddyapplication.dto;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class SensorDataDto {
 
     private String serialNumber;
+
+    private LocalDateTime timestamp;
 
     private BigDecimal sensor1;
 
@@ -23,6 +26,16 @@ public class SensorDataDto {
 
     public SensorDataDto(String serialNumber, BigDecimal sensor1, BigDecimal sensor2, BigDecimal sensor3, BigDecimal sensor4, BigDecimal sensor5) {
         this.serialNumber = serialNumber;
+        this.sensor1 = sensor1;
+        this.sensor2 = sensor2;
+        this.sensor3 = sensor3;
+        this.sensor4 = sensor4;
+        this.sensor5 = sensor5;
+    }
+
+    public SensorDataDto(String serialNumber, LocalDateTime timestamp, BigDecimal sensor1, BigDecimal sensor2, BigDecimal sensor3, BigDecimal sensor4, BigDecimal sensor5) {
+        this.serialNumber = serialNumber;
+        this.timestamp = timestamp;
         this.sensor1 = sensor1;
         this.sensor2 = sensor2;
         this.sensor3 = sensor3;
@@ -58,6 +71,14 @@ public class SensorDataDto {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public BigDecimal getSensor1() {

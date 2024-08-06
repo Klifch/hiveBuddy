@@ -5,12 +5,13 @@ import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.repository.DeviceRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class DeviceServiceImpl implements DeviceService {
 
-    private DeviceRepository deviceRepository;
+    private final DeviceRepository deviceRepository;
 
     public DeviceServiceImpl(DeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
@@ -40,4 +41,5 @@ public class DeviceServiceImpl implements DeviceService {
     public Device save(Device device) {
         return deviceRepository.save(device);
     }
+
 }

@@ -24,6 +24,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:src="@{/js/updateDeviceData.js}" defer></script>
+    <script th:src="@{/js/updateDeviceDataChart.js}" defer></script>
 
 </head>
 <body>
@@ -89,63 +90,65 @@
         </div>
     </div>
 
-    <script>
-        let myChart;
+<!--    <script>-->
+<!--        let myChart;-->
 
-        document.getElementById('generateButton').addEventListener('click', function() {
-            const serialNumber = document.getElementById('serialNumber').value;
-            const sensor = document.getElementById('sensorSelect').value;
-            const minutes = document.getElementById('timeSelect').value;
-            const frequency = document.getElementById('frequencySelect').value;
+<!--        // document.addEventListener('DOMContentLoaded')-->
 
-            let url;
-            if (sensor === 'all') {
-                url = `http://localhost:8080/sensorapi/data/sensors/${serialNumber}?minutes=${minutes}&frequency=${frequency}`; // dummy for now
-            } else {
-                url = `http://localhost:8080/sensorapi/data/sensor/${serialNumber}?sensorNumber=${sensor}&minutes=${minutes}&average=true&frequency=${frequency}`;
-            }
+<!--        document.getElementById('generateButton').addEventListener('click', function() {-->
+<!--            const serialNumber = document.getElementById('serialNumber').value;-->
+<!--            const sensor = document.getElementById('sensorSelect').value;-->
+<!--            const minutes = document.getElementById('timeSelect').value;-->
+<!--            const frequency = document.getElementById('frequencySelect').value;-->
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const labels = data.map(item => new Date(item.timestamp).toLocaleTimeString());
-                    const values = data.map(item => item.value);
+<!--            let url;-->
+<!--            if (sensor === 'all') {-->
+<!--                url = `http://localhost:8080/sensorapi/data/sensors/${serialNumber}?minutes=${minutes}&frequency=${frequency}`; // dummy for now-->
+<!--            } else {-->
+<!--                url = `http://localhost:8080/sensorapi/data/sensor/${serialNumber}?sensorNumber=${sensor}&minutes=${minutes}&average=true&frequency=${frequency}`;-->
+<!--            }-->
 
-                    const ctx = document.getElementById('myChart').getContext('2d');
+<!--            fetch(url)-->
+<!--                .then(response => response.json())-->
+<!--                .then(data => {-->
+<!--                    const labels = data.map(item => new Date(item.timestamp).toLocaleTimeString());-->
+<!--                    const values = data.map(item => item.value);-->
 
-                    if (myChart) {
-                        myChart.destroy();
-                    }
+<!--                    const ctx = document.getElementById('myChart').getContext('2d');-->
 
-                    myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Sensor Data',
-                                data: values,
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1,
-                                fill: false
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            }
-                        }
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        });
+<!--                    if (myChart) {-->
+<!--                        myChart.destroy();-->
+<!--                    }-->
 
-        document.getElementById('realTimeButton').addEventListener('click', function() {
-            // Real-time button handler (currently does nothing)
-            console.log('Real-time button clicked');
-        });
-    </script>
+<!--                    myChart = new Chart(ctx, {-->
+<!--                        type: 'line',-->
+<!--                        data: {-->
+<!--                            labels: labels,-->
+<!--                            datasets: [{-->
+<!--                                label: 'Sensor Data',-->
+<!--                                data: values,-->
+<!--                                borderColor: 'rgba(75, 192, 192, 1)',-->
+<!--                                borderWidth: 1,-->
+<!--                                fill: false-->
+<!--                            }]-->
+<!--                        },-->
+<!--                        options: {-->
+<!--                            scales: {-->
+<!--                                y: {-->
+<!--                                    beginAtZero: true-->
+<!--                                }-->
+<!--                            }-->
+<!--                        }-->
+<!--                    });-->
+<!--                })-->
+<!--                .catch(error => console.error('Error fetching data:', error));-->
+<!--        });-->
+
+<!--        document.getElementById('realTimeButton').addEventListener('click', function() {-->
+<!--            // Real-time button handler (currently does nothing)-->
+<!--            console.log('Real-time button clicked');-->
+<!--        });-->
+<!--    </script>-->
 
 
 <!--    <div class="container px-3">-->

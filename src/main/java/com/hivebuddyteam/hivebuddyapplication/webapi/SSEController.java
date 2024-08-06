@@ -33,26 +33,6 @@ public class SSEController {
         this.deviceService = deviceService;
     }
 
-//    @GetMapping("/stream")
-//    public SseEmitter streamSseEvents(@AuthenticationPrincipal UserDetails userDetails) {
-//        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-//
-//        executorService.execute(() -> {
-//            try {
-//                for (int i = 0; i < 10; i++) {
-//                    Thread.sleep(1000); // simulate delay
-//                    sseEmitter.send("SSE MVC - " + System.currentTimeMillis() + " User: " + userDetails.getUsername());
-//                    System.out.println("Sending event number " + i + " to user " + userDetails.getUsername());
-//                }
-//                System.out.println("Stopped streaming events");
-//                sseEmitter.complete();
-//            } catch (Exception e) {
-//                sseEmitter.completeWithError(e);
-//            }
-//        });
-//        return sseEmitter;
-//    }
-
     @GetMapping(value = "/subscribe") //  produces = MediaType.TEXT_EVENT_STREAM_VALUE
     public SseEmitter subscribeToUpdates(
             @RequestParam("deviceSerial") String deviceSerial,
@@ -64,7 +44,11 @@ public class SSEController {
         System.out.println("Subscription created!");
         String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
 
-        subscriptions.put(subscriptionName, subscription);
+        if (subscriptions.containsKey(subscriptionName)) {
+            return subscriptions.get(subscriptionName).getEmitter();
+        } else {
+            subscriptions.put(subscriptionName, subscription);
+        }
 
         sseEmitter.onCompletion(() -> {
             scheduler.shutdownNow();

@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="/assets/css/nice-select.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/style-update-personal.css">
+
+    <script th:src="@{/js/pollDeviceStatus.js}" defer></script>
+
 </head>
 <body>
 
@@ -60,7 +63,7 @@
                         <p class="card-text">
                             <span th:text="'Serial: ' + ${device.serialNumber}">Serial</span><br>
                             <span th:text="'Platform'">Battery</span><br>
-                            <span th:text="'Time'">Time</span>
+                            <span class = "status-text" th:id="'status-' + ${device.serialNumber}" th:text="'Status'">Status</span>
                         </p>
                         <a class="btn btn-primary" href="#" th:href="@{/hiveData(deviceSerial=${device.serialNumber})}">Check</a>
                     </div>
