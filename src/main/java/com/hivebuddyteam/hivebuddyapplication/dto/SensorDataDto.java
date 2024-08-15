@@ -9,6 +9,8 @@ public class SensorDataDto {
 
     private String serialNumber;
 
+    private String securityCode;
+
     private LocalDateTime timestamp;
 
     private BigDecimal sensor1;
@@ -36,6 +38,16 @@ public class SensorDataDto {
     public SensorDataDto(String serialNumber, LocalDateTime timestamp, BigDecimal sensor1, BigDecimal sensor2, BigDecimal sensor3, BigDecimal sensor4, BigDecimal sensor5) {
         this.serialNumber = serialNumber;
         this.timestamp = timestamp;
+        this.sensor1 = sensor1;
+        this.sensor2 = sensor2;
+        this.sensor3 = sensor3;
+        this.sensor4 = sensor4;
+        this.sensor5 = sensor5;
+    }
+
+    public SensorDataDto(String serialNumber, String securityCode, BigDecimal sensor1, BigDecimal sensor2, BigDecimal sensor3, BigDecimal sensor4, BigDecimal sensor5) {
+        this.serialNumber = serialNumber;
+        this.securityCode = securityCode;
         this.sensor1 = sensor1;
         this.sensor2 = sensor2;
         this.sensor3 = sensor3;
@@ -119,5 +131,13 @@ public class SensorDataDto {
 
     public void setSensor5(BigDecimal sensor5) {
         this.sensor5 = sensor5;
+    }
+
+    public String getSecurityCode() {
+        return securityCode;
+    }
+
+    public void setSecurityCode(String securityCode) {
+        this.securityCode = securityCode;
     }
 }

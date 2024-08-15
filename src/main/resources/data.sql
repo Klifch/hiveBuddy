@@ -55,15 +55,19 @@ VALUES
     (3, 2);
 
 
+INSERT INTO unregistered_pool (serial_number, security_code) VALUES
+                                                                 ('zxcvbn', '1234'),
+                                                                 ('asdzxc', '1122');
+
 -- Insert sample devices for user1
-INSERT INTO devices (user_id, device_name, serial_number) VALUES
-                                                              (1, 'Device 1 for User 1', 'qwerty1'),
-                                                              (1, 'Device 2 for User 1', 'qwerty2');
+INSERT INTO devices (user_id, device_name, serial_number, active, security_code) VALUES
+                                                              (1, 'Device 1 for User 1', 'qwerty1', true, '1234'),
+                                                              (1, 'Device 2 for User 1', 'qwerty2', true, '1234');
 
 -- Insert sample devices for user2
-INSERT INTO devices (user_id, device_name, serial_number) VALUES
-                                                              (2, 'Device 1 for User 2', 'asdf4'),
-                                                              (2, 'Device 2 for User 2', 'qwwefhh4');
+INSERT INTO devices (user_id, device_name, serial_number, active, security_code) VALUES
+                                                              (2, 'Device 1 for User 2', 'asdf4', true, '1122'),
+                                                              (2, 'Device 2 for User 2', 'qwwefhh4', true, '1122');
 
 -- Insert sample sensor data for Device 1 for User 1
 INSERT INTO sensor_data (device_id, timestamp, sensor1, sensor2, sensor3, sensor4, sensor5) VALUES

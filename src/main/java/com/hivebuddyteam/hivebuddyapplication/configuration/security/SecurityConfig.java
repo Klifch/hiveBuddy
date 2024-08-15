@@ -49,6 +49,7 @@ public class SecurityConfig {
                     .requestMatchers("/ws-message/**").permitAll()
                     .requestMatchers("/showDashboard").permitAll()
                     .requestMatchers("/personalHome").hasRole("REGULAR")
+                    .requestMatchers(HttpMethod.POST, "/deviceapi/auth").permitAll() // register device
                     .requestMatchers(HttpMethod.POST, "/sensorapi/sensors").permitAll() // remote devices api
                     .requestMatchers(HttpMethod.GET, "/sensorapi/sensors").hasRole("ADMIN") // ONLY ADMIN as exposes passwords and usernames
                     .anyRequest().authenticated();

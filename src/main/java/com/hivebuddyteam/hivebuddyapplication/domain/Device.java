@@ -18,6 +18,10 @@ public class Device {
 
     private String serialNumber;
 
+    private Boolean active;
+
+    private String securityCode;
+
     public Device() {
     }
 
@@ -25,6 +29,14 @@ public class Device {
         this.user = user;
         this.deviceName = deviceName;
         this.serialNumber = serialNumber;
+    }
+
+    public Device(User user, String deviceName, String serialNumber, Boolean active, String securityCode) {
+        this.user = user;
+        this.deviceName = deviceName;
+        this.serialNumber = serialNumber;
+        this.active = active;
+        this.securityCode = securityCode;
     }
 
     public Integer getDeviceId() {
@@ -58,5 +70,21 @@ public class Device {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getSecurityCode() {
+        return securityCode;
+    }
+
+    public void setSecurityCode(String securityCode) {
+        this.securityCode = securityCode;
     }
 }

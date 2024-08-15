@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS user_roles CASCADE;
 DROP TABLE IF EXISTS users_roles CASCADE;
 DROP TABLE IF EXISTS sensor_data CASCADE;
 DROP TABLE IF EXISTS devices CASCADE;
+DROP TABLE IF EXISTS unregistered_pool CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS role CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
@@ -49,7 +50,14 @@ CREATE TABLE devices (
                          device_id SERIAL PRIMARY KEY,
                          user_id INT REFERENCES users(user_id),
                          device_name VARCHAR(50) NOT NULL,
-                         serial_number VARCHAR(50) NOT NULL
+                         serial_number VARCHAR(50) NOT NULL,
+                         active boolean NOT NULL,
+                         security_code VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE unregistered_pool (
+                         serial_number VARCHAR(50) PRIMARY KEY ,
+                         security_code VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE sensor_data (

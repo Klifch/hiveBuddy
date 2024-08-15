@@ -3,9 +3,9 @@ let myChart;
 function fetchDataAndRenderChart(serialNumber, minutes, frequency, sensor) {
     let url;
     if (sensor === 'all') {
-        url = `http://localhost:8080/sensorapi/data/device/${serialNumber}?minutes=${minutes}&frequency=${frequency}`;
+        url = `/sensorapi/data/device/${serialNumber}?minutes=${minutes}&frequency=${frequency}`;
     } else {
-        url = `http://localhost:8080/sensorapi/data/sensor/${serialNumber}?sensorNumber=${sensor}&minutes=${minutes}&average=true&frequency=${frequency}`;
+        url = `/sensorapi/data/sensor/${serialNumber}?sensorNumber=${sensor}&minutes=${minutes}&average=true&frequency=${frequency}`;
     }
 
     fetch(url)

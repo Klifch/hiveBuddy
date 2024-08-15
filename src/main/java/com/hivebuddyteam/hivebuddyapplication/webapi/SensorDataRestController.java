@@ -29,11 +29,30 @@ public class SensorDataRestController {
     }
 
     @PostMapping("/sensors")
-    public SensorData saveData(@RequestBody SensorDataDto sensorDataDto) {
+    public SensorDataDto saveData(@RequestBody SensorDataDto sensorDataDto) {
+
+        Device device = deviceService.findBySerial(sensorDataDto.getSerialNumber());
+
+        if (device == null) {
+            return null;
+        }
+
+        if (!device.getActive()) {
+            return null;
+        }
+
+        if (!device.getSecurityCode().equals(sensorDataDto.getSecurityCode())) {
+            return null;
+        }
 
         SensorData newSensorData = sensorDataService.save(sensorDataDto);
 
-        return newSensorData;
+        SensorDataDto newSensorDataDto = SensorDataDto.mapToDto(
+                sensorDataDto.getSerialNumber(),
+                newSensorData
+        );
+
+        return newSensorDataDto;
     }
 
     @GetMapping("/data/sensor/{serial}")

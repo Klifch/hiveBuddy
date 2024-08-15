@@ -1,9 +1,11 @@
 package com.hivebuddyteam.hivebuddyapplication.controller;
 
+import com.hivebuddyteam.hivebuddyapplication.dto.AddNewDeviceDto;
 import com.hivebuddyteam.hivebuddyapplication.dto.DeviceDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
+import com.hivebuddyteam.hivebuddyapplication.service.UnregisteredPoolService;
 import com.hivebuddyteam.hivebuddyapplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -25,11 +27,13 @@ public class PersonalPageController {
 
     private final DeviceService deviceService;
     private final UserService userService;
+    private final UnregisteredPoolService unregisteredPoolService;
 
     Logger logger = LoggerFactory.getLogger(PersonalPageController.class);
 
     @Autowired
-    public PersonalPageController(DeviceService deviceService, UserService userService) {
+    public PersonalPageController(DeviceService deviceService, UserService userService, UnregisteredPoolService unregisteredPoolService) {
+        this.unregisteredPoolService = unregisteredPoolService;
         logger.info("DeviceService injected in PersonalPageController ...");
         this.userService = userService;
         this.deviceService = deviceService;
@@ -117,7 +121,7 @@ public class PersonalPageController {
 
         logger.info("Received get request /registerNewDevice");
 
-        DeviceDto deviceDto = new DeviceDto();
+        AddNewDeviceDto deviceDto = new AddNewDeviceDto();
 
         model.addAttribute("deviceDto", deviceDto);
 
@@ -129,14 +133,28 @@ public class PersonalPageController {
 
     @PostMapping("/processNewDeviceForm")
     public String processNewDevice(
+            @AuthenticationPrincipal UserDetails user,
             Model model,
-            @ModelAttribute("deviceDto") DeviceDto deviceDto,
+            @ModelAttribute("deviceDto") AddNewDeviceDto deviceDto,
             HttpSession httpSession
     ) {
 
         logger.info("Received post request /processNewDeviceForm");
 
+        if (deviceDto == null) {
+            return "register_device_form";
+        }
+
         String serial = deviceDto.getSerialNumber();
+
+        if (!unregisteredPoolService.checkIfExists(serial)) {
+            logger.warn("Invalid device, can't find in pool of manufactured devices");
+
+            model.addAttribute("deviceDto", new DeviceDto());
+            model.addAttribute("wrongCredentials", "Device with this serial could not be registered!");
+
+            return "register_device_form";
+        }
 
         Device existingDevice = deviceService.findBySerial(serial);
 
@@ -150,10 +168,22 @@ public class PersonalPageController {
             return "register_device_form";
         }
 
+        if (!unregisteredPoolService.checkIfSecurityCodeValid(deviceDto.getSecurityCode(), serial)) {
+            logger.warn("Wrong combination of security code and serial!");
+            logger.warn("Returning view with new DeviceDto");
+
+            model.addAttribute("deviceDto", new DeviceDto());
+            model.addAttribute("wrongCredentials", "Wrong combination of security code and serial!");
+
+            return "register_device_form";
+        }
+
         Device device = new Device();
         device.setDeviceName(deviceDto.getDeviceName());
         device.setSerialNumber(deviceDto.getSerialNumber());
-        device.setUser((User) httpSession.getAttribute("user"));
+        device.setUser(userService.finByUsername(user.getUsername()));
+        device.setActive(false);
+        device.setSecurityCode(deviceDto.getSecurityCode());
 
         deviceService.save(device);
 
