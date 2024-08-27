@@ -25,6 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:src="@{/js/updateDeviceData.js}" defer></script>
     <script th:src="@{/js/updateDeviceDataChart.js}" defer></script>
+    <script th:src="@{/js/hiveDataUpdate.js}" defer></script>
 
 </head>
 <body>
@@ -55,155 +56,194 @@
 
 
     <input type="hidden" id="serialNumber" th:value="${theDevice.serialNumber}">
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-2 d-flex flex-column justify-content-between">
-                <select id="sensorSelect" class="form-control mb-2">
-                    <option value="all">All Sensors</option>
-                    <option value="1">Sensor 1</option>
-                    <option value="2">Sensor 2</option>
-                    <option value="3">Sensor 3</option>
-                    <option value="4">Sensor 4</option>
-                    <option value="5">Sensor 5</option>
-                </select>
-                <select id="timeSelect" class="form-control mb-2">
-                    <option value="5">5 Minutes</option>
-                    <option value="15">15 Minutes</option>
-                    <option value="30">30 Minutes</option>
-                    <option value="60">1 Hour</option>
-                    <option value="1440">1 Day</option>
-                </select>
-                <select id="frequencySelect" class="form-control mb-2">
-                    <option value="1">1 Minute</option>
-                    <option value="5">5 Minutes</option>
-                    <option value="15">15 Minutes</option>
-                    <option value="30">30 Minutes</option>
-                    <option value="60">60 Minutes</option>
-                </select>
-                <button id="generateButton" class="btn btn-primary mb-2">Generate</button>
-                <button id="realTimeButton" class="btn btn-primary mb-2">Real-Time</button>
-            </div>
-            <div class="col-md-10">
-                <canvas id="myChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-<!--    <script>-->
-<!--        let myChart;-->
-
-<!--        // document.addEventListener('DOMContentLoaded')-->
-
-<!--        document.getElementById('generateButton').addEventListener('click', function() {-->
-<!--            const serialNumber = document.getElementById('serialNumber').value;-->
-<!--            const sensor = document.getElementById('sensorSelect').value;-->
-<!--            const minutes = document.getElementById('timeSelect').value;-->
-<!--            const frequency = document.getElementById('frequencySelect').value;-->
-
-<!--            let url;-->
-<!--            if (sensor === 'all') {-->
-<!--                url = `http://localhost:8080/sensorapi/data/sensors/${serialNumber}?minutes=${minutes}&frequency=${frequency}`; // dummy for now-->
-<!--            } else {-->
-<!--                url = `http://localhost:8080/sensorapi/data/sensor/${serialNumber}?sensorNumber=${sensor}&minutes=${minutes}&average=true&frequency=${frequency}`;-->
-<!--            }-->
-
-<!--            fetch(url)-->
-<!--                .then(response => response.json())-->
-<!--                .then(data => {-->
-<!--                    const labels = data.map(item => new Date(item.timestamp).toLocaleTimeString());-->
-<!--                    const values = data.map(item => item.value);-->
-
-<!--                    const ctx = document.getElementById('myChart').getContext('2d');-->
-
-<!--                    if (myChart) {-->
-<!--                        myChart.destroy();-->
-<!--                    }-->
-
-<!--                    myChart = new Chart(ctx, {-->
-<!--                        type: 'line',-->
-<!--                        data: {-->
-<!--                            labels: labels,-->
-<!--                            datasets: [{-->
-<!--                                label: 'Sensor Data',-->
-<!--                                data: values,-->
-<!--                                borderColor: 'rgba(75, 192, 192, 1)',-->
-<!--                                borderWidth: 1,-->
-<!--                                fill: false-->
-<!--                            }]-->
-<!--                        },-->
-<!--                        options: {-->
-<!--                            scales: {-->
-<!--                                y: {-->
-<!--                                    beginAtZero: true-->
-<!--                                }-->
-<!--                            }-->
-<!--                        }-->
-<!--                    });-->
-<!--                })-->
-<!--                .catch(error => console.error('Error fetching data:', error));-->
-<!--        });-->
-
-<!--        document.getElementById('realTimeButton').addEventListener('click', function() {-->
-<!--            // Real-time button handler (currently does nothing)-->
-<!--            console.log('Real-time button clicked');-->
-<!--        });-->
-<!--    </script>-->
-
-
-<!--    <div class="container px-3">-->
-<!--        <canvas id="myChart"></canvas>-->
-<!--    </div>-->
-
-
+<!-- IMPORTANT OLD IMPLEMENTATION! -->
 <!--    <div class="container mt-5">-->
 <!--        <div class="row">-->
 <!--            <div class="col-md-2 d-flex flex-column justify-content-between">-->
-<!--                <button id="button1" class="btn btn-primary mb-2">Button 1</button>-->
-<!--                <button class="btn btn-primary mb-2">Button 2</button>-->
-<!--                <button class="btn btn-primary mb-2">Button 3</button>-->
-<!--                <button class="btn btn-primary mb-2">Button 4</button>-->
-<!--                <button class="btn btn-primary mb-2">Button 5</button>-->
+<!--                <select id="sensorSelect" class="form-control mb-2">-->
+<!--                    <option value="all">All Sensors</option>-->
+<!--                    <option value="1">Sensor 1</option>-->
+<!--                    <option value="2">Sensor 2</option>-->
+<!--                    <option value="3">Sensor 3</option>-->
+<!--                    <option value="4">Sensor 4</option>-->
+<!--                    <option value="5">Sensor 5</option>-->
+<!--                </select>-->
+<!--                <select id="timeSelect" class="form-control mb-2">-->
+<!--                    <option value="5">5 Minutes</option>-->
+<!--                    <option value="15">15 Minutes</option>-->
+<!--                    <option value="30">30 Minutes</option>-->
+<!--                    <option value="60">1 Hour</option>-->
+<!--                    <option value="1440">1 Day</option>-->
+<!--                </select>-->
+<!--                <select id="frequencySelect" class="form-control mb-2">-->
+<!--                    <option value="1">1 Minute</option>-->
+<!--                    <option value="5">5 Minutes</option>-->
+<!--                    <option value="15">15 Minutes</option>-->
+<!--                    <option value="30">30 Minutes</option>-->
+<!--                    <option value="60">60 Minutes</option>-->
+<!--                </select>-->
+<!--                <button id="generateButton" class="btn btn-primary mb-2">Generate</button>-->
+<!--                <button id="realTimeButton" class="btn btn-primary mb-2">Real-Time</button>-->
 <!--            </div>-->
 <!--            <div class="col-md-10">-->
 <!--                <canvas id="myChart"></canvas>-->
 <!--            </div>-->
 <!--        </div>-->
 <!--    </div>-->
+<!--    <div class="container mt-5">-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-2 mt-3">-->
+<!--                <div class="row mb-3">-->
+<!--                    &lt;!&ndash; Date Picker &ndash;&gt;-->
+<!--                    <div class="col-md-12">-->
+<!--                        <label for="datePicker">Select Day</label>-->
+<!--                        <input type="date" id="datePicker" class="form-control" placeholder="Select Date">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="row mb-3">-->
+<!--                    <div class="col-md-12">-->
+<!--                        <label for="sensorSelect">For Sensor</label>-->
+<!--                        <select id="sensorSelect" class="form-control w-100">-->
+<!--                            <option value="1" selected>Sensor 1</option>-->
+<!--                            <option value="2">Sensor 2</option>-->
+<!--                            <option value="3">Sensor 3</option>-->
+<!--                            <option value="4">Sensor 4</option>-->
+<!--                            <option value="5">Sensor 5</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="row mb-3">-->
+<!--                    <div class="col-md-12">-->
+<!--                        <label for="timeFrom">From</label>-->
+<!--                        <input type="time" id="timeFrom" class="form-control" placeholder="From">-->
+<!--                    </div>-->
+<!--                </div>-->
 
-<!--    <script>-->
-<!--        document.getElementById('button1').addEventListener('click', function() {-->
-<!--            fetch('http://localhost:8080/sensorapi/data/sensor/asdf4?minutes=30&sensorNumber=1&average=true&frequency=5')-->
-<!--                .then(response => response.json())-->
-<!--                .then(data => {-->
-<!--                    const labels = data.map(item => new Date(item.timestamp).toLocaleTimeString());-->
-<!--                    const values = data.map(item => item.value);-->
+<!--                <div class="row mb-3">-->
+<!--                    <div class="col-md-12">-->
+<!--                        <label for="timeTo">To</label>-->
+<!--                        <input type="time" id="timeTo" class="form-control" placeholder="To">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="row">-->
+<!--                    <div class="col-md-12 mb-3">-->
+<!--                        &lt;!&ndash; Generate Button &ndash;&gt;-->
+<!--                        <button id="generateButton" class="btn btn-primary">Generate</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; Right side: Chart &ndash;&gt;-->
+<!--            <div class="col-md-10">-->
+<!--                <canvas id="myChart"></canvas>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
-<!--                    const ctx = document.getElementById('myChart').getContext('2d');-->
-<!--                    new Chart(ctx, {-->
-<!--                        type: 'line',-->
-<!--                        data: {-->
-<!--                            labels: labels,-->
-<!--                            datasets: [{-->
-<!--                                label: 'Sensor Data',-->
-<!--                                data: values,-->
-<!--                                borderColor: 'rgba(75, 192, 192, 1)',-->
-<!--                                borderWidth: 1,-->
-<!--                                fill: false-->
-<!--                            }]-->
-<!--                        },-->
-<!--                        options: {-->
-<!--                            scales: {-->
-<!--                                y: {-->
-<!--                                    beginAtZero: true-->
-<!--                                }-->
-<!--                            }-->
-<!--                        }-->
-<!--                    });-->
-<!--                })-->
-<!--                .catch(error => console.error('Error fetching data:', error));-->
-<!--        });-->
-<!--    </script>-->
+    <div class="container mt-5">
+        <!-- New Row with Toggle Buttons -->
+        <div class="row mb-4">
+            <div class="col-md-2 text-center">
+                <button id="showNewControls" class="btn-custom w-100">DateTime</button>
+            </div>
+            <div class="col-md-2 text-center">
+                <button id="showOldControls" class="btn-custom w-100">Averages</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left side: New Controls (initially shown) -->
+            <div id="newControls" class="col-md-2 mt-3">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="datePicker">Select Day</label>
+                        <input type="date" id="datePicker" class="form-control" placeholder="Select Date">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="sensorSelect">For Sensor</label>
+                        <select id="sensorSelect" class="form-control w-100">
+                            <option value="1" selected>Sensor 1</option>
+                            <option value="2">Sensor 2</option>
+                            <option value="3">Sensor 3</option>
+                            <option value="4">Sensor 4</option>
+                            <option value="5">Sensor 5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="timeFrom">From</label>
+                        <input type="time" id="timeFrom" class="form-control" placeholder="From">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="timeTo">To</label>
+                        <input type="time" id="timeTo" class="form-control" placeholder="To">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <button id="generateButton" class="btn btn-primary w-100">Generate</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left side: Old Controls (initially hidden) -->
+            <div id="oldControls" class="col-md-2 mt-3" style="display: none;">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <select id="oldSensorSelect" class="form-control mb-2">
+                            <option value="all">All Sensors</option>
+                            <option value="1">Sensor 1</option>
+                            <option value="2">Sensor 2</option>
+                            <option value="3">Sensor 3</option>
+                            <option value="4">Sensor 4</option>
+                            <option value="5">Sensor 5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <select id="timeSelect" class="form-control mb-2">
+                            <option value="5">5 Minutes</option>
+                            <option value="15">15 Minutes</option>
+                            <option value="30">30 Minutes</option>
+                            <option value="60">1 Hour</option>
+                            <option value="1440">1 Day</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <select id="frequencySelect" class="form-control mb-2">
+                            <option value="1">1 Minute</option>
+                            <option value="5">5 Minutes</option>
+                            <option value="15">15 Minutes</option>
+                            <option value="30">30 Minutes</option>
+                            <option value="60">60 Minutes</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <button id="generateButtonOld" class="btn btn-primary mb-2 w-100">Generate</button>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <button id="realTimeButtonOld" class="btn btn-primary mb-2 w-100">Real-Time</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side: Chart -->
+            <div class="col-md-10">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </div>
 
 
     <section class="pricing-card-area pricing-card-area2 section-padding300">

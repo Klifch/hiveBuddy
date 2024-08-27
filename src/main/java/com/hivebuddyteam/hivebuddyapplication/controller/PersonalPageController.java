@@ -1,10 +1,12 @@
 package com.hivebuddyteam.hivebuddyapplication.controller;
 
+import com.hivebuddyteam.hivebuddyapplication.domain.Notification;
 import com.hivebuddyteam.hivebuddyapplication.dto.AddNewDeviceDto;
 import com.hivebuddyteam.hivebuddyapplication.dto.DeviceDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.User;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
+import com.hivebuddyteam.hivebuddyapplication.service.NotificationService;
 import com.hivebuddyteam.hivebuddyapplication.service.UnregisteredPoolService;
 import com.hivebuddyteam.hivebuddyapplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -28,33 +30,18 @@ public class PersonalPageController {
     private final DeviceService deviceService;
     private final UserService userService;
     private final UnregisteredPoolService unregisteredPoolService;
+    private final NotificationService notificationService;
 
     Logger logger = LoggerFactory.getLogger(PersonalPageController.class);
 
     @Autowired
-    public PersonalPageController(DeviceService deviceService, UserService userService, UnregisteredPoolService unregisteredPoolService) {
+    public PersonalPageController(DeviceService deviceService, UserService userService, UnregisteredPoolService unregisteredPoolService, NotificationService notificationService) {
         this.unregisteredPoolService = unregisteredPoolService;
+        this.notificationService = notificationService;
         logger.info("DeviceService injected in PersonalPageController ...");
         this.userService = userService;
         this.deviceService = deviceService;
     }
-
-//    @GetMapping("/personalHomeOld")
-//    public String showPersonalPage(Model model, HttpSession httpSession) {
-//
-//        User user = (User) httpSession.getAttribute("user");
-//
-//        if (user == null) {
-//            throw new RuntimeException("User is empty, no list of devices!");
-//            // custom error to add
-//        }
-//
-//        List<Device> devices = deviceService.findAllByUser(user);
-//
-//        model.addAttribute("devices", devices);
-//
-//        return "personal_page";
-//    }
 
     @GetMapping("/hiveData")
     public String showHiveDetails(
@@ -74,6 +61,11 @@ public class PersonalPageController {
 
         logger.info("Device --> {} added to the model and session", device);
 
+        List<Notification> notifications = notificationService.getAllForDevice(device);
+
+        logger.info("Notifications for device {} added to the model", device.getSerialNumber());
+        System.out.println(String.format("got notifications %d", notifications.size()));
+        model.addAttribute("notifications", notifications);
         model.addAttribute("theDevice", device);
         httpSession.setAttribute("device", device); // Wy tf do I need it?
 

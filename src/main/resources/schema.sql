@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS user_roles CASCADE;
 DROP TABLE IF EXISTS users_roles CASCADE;
 DROP TABLE IF EXISTS sensor_data CASCADE;
 DROP TABLE IF EXISTS devices CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS unregistered_pool CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS role CASCADE;
@@ -55,8 +56,17 @@ CREATE TABLE devices (
                          security_code VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE notifications (
+                        notification_id SERIAL PRIMARY KEY,
+                        device_id INT REFERENCES devices(device_id),
+                        message VARCHAR(150) NOT NULL,
+                        sensor_type VARCHAR(50),
+                        timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                        checked boolean NOT NULL
+);
+
 CREATE TABLE unregistered_pool (
-                         serial_number VARCHAR(50) PRIMARY KEY ,
+                         serial_number VARCHAR(50) PRIMARY KEY,
                          security_code VARCHAR(50) NOT NULL
 );
 

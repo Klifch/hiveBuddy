@@ -5,6 +5,7 @@ import com.hivebuddyteam.hivebuddyapplication.dto.SensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
 import com.hivebuddyteam.hivebuddyapplication.dto.SingleSensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
+import com.hivebuddyteam.hivebuddyapplication.service.NotificationService;
 import com.hivebuddyteam.hivebuddyapplication.service.SensorDataService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,12 @@ public class SensorDataRestController {
 
     private final SensorDataService sensorDataService;
     private final DeviceService deviceService;
+    private final NotificationService notificationService;
 
-    public SensorDataRestController(SensorDataService sensorDataService, DeviceService deviceService) {
+    public SensorDataRestController(SensorDataService sensorDataService, DeviceService deviceService, NotificationService notificationService) {
         this.sensorDataService = sensorDataService;
         this.deviceService = deviceService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/sensors")
@@ -43,6 +46,30 @@ public class SensorDataRestController {
 
         if (!device.getSecurityCode().equals(sensorDataDto.getSecurityCode())) {
             return null;
+        }
+
+        if (sensorDataDto.getSensor1().doubleValue() > 36) {
+            notificationService.registerSensorNotification(
+                    device,
+                    "temp",
+                    sensorDataDto.getSensor1().doubleValue()
+            );
+        }
+
+        if (sensorDataDto.getSensor2().doubleValue() > 65) {
+            notificationService.registerSensorNotification(
+                    device,
+                    "humid",
+                    sensorDataDto.getSensor2().doubleValue()
+            );
+        }
+
+        if (sensorDataDto.getSensor4().doubleValue() != 0) {
+            notificationService.registerSensorNotification(
+                    device,
+                    "water",
+                    sensorDataDto.getSensor4().doubleValue()
+            );
         }
 
         SensorData newSensorData = sensorDataService.save(sensorDataDto);

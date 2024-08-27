@@ -69,6 +69,12 @@ INSERT INTO devices (user_id, device_name, serial_number, active, security_code)
                                                               (2, 'Device 1 for User 2', 'asdf4', true, '1122'),
                                                               (2, 'Device 2 for User 2', 'qwwefhh4', true, '1122');
 
+INSERT INTO notifications (device_id, message, timestamp, checked) VALUES
+                                                                       (3, 'test message', CURRENT_TIMESTAMP, false),
+                                                                       (3, 'test message test message test message', CURRENT_TIMESTAMP, false),
+                                                                       (3, 'test message test message', CURRENT_TIMESTAMP, false),
+                                                                       (3, 'test message test messagetest message test message test messagetest message', CURRENT_TIMESTAMP, false);
+
 -- Insert sample sensor data for Device 1 for User 1
 INSERT INTO sensor_data (device_id, timestamp, sensor1, sensor2, sensor3, sensor4, sensor5) VALUES
                                                                                                 (1, CURRENT_TIMESTAMP - interval '10' minute, 10.5, 20.3, 15.7, 8.2, 12.0),
