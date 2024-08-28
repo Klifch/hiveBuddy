@@ -27,6 +27,7 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("org.postgresql:postgresql:42.7.1")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
 	// jQuery
 	implementation("org.webjars:jquery:3.6.4")

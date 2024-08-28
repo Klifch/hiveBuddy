@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -163,6 +165,47 @@ public class SensorDataServiceImpl implements SensorDataService{
         }
 
         return lastUpdate.isAfter(borderTime);
+    }
+
+    @Override
+    public List<SingleSensorDataDto> getSingleSensorDataForDeviceDay(Device device, LocalDate date, Integer sensorNumber) {
+        LocalDateTime startTime = date.atStartOfDay();
+        LocalDateTime endTime = startTime.plusDays(1);
+        String serial = device.getSerialNumber();
+
+        List<SensorData> sensorDataList = sensorDataRepository.findAllByDeviceAndTimestampBetween(device, startTime, endTime);
+
+        List<SingleSensorDataDto> singleSensorDataDtoList = new ArrayList<>(sensorDataList.stream()
+                .map(
+                        data -> new SingleSensorDataDto(
+                                serial,
+                                data.getTimestamp(),
+                                getSensorValue(data, sensorNumber)
+                        )
+                ).toList());
+
+        singleSensorDataDtoList.sort(Comparator.comparing(SingleSensorDataDto::getTimestamp));
+
+        return singleSensorDataDtoList;
+    }
+
+    @Override
+    public List<SingleSensorDataDto> getSingleSensorDataForDeviceWithInterval(Device device, Integer sensor, LocalDateTime from, LocalDateTime to) {
+        List<SensorData> sensorDataList = sensorDataRepository.findAllByDeviceAndTimestampBetween(device, from, to);
+        String serial = device.getSerialNumber();
+
+        List<SingleSensorDataDto> singleSensorDataDtoList = new ArrayList<>(sensorDataList.stream()
+                .map(
+                        data -> new SingleSensorDataDto(
+                                serial,
+                                data.getTimestamp(),
+                                getSensorValue(data, sensor)
+                        )
+                ).toList());
+
+        singleSensorDataDtoList.sort(Comparator.comparing(SingleSensorDataDto::getTimestamp));
+
+        return singleSensorDataDtoList;
     }
 
     private BigDecimal calculateAverage(List<SensorData> intervalData, Integer sensorNumber) {

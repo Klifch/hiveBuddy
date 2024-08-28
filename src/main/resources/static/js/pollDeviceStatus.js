@@ -165,5 +165,5 @@ document.addEventListener('DOMContentLoaded', function() {
     pollDeviceStatusesAndNotifications();
     addBellIconClickListeners();
     // Poll every minute
-    setInterval(pollDeviceStatusesAndNotifications, 60000);
+    setInterval(pollDeviceStatusesAndNotifications, 20000);
 });

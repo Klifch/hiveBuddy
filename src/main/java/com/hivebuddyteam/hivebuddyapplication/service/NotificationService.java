@@ -16,5 +16,5 @@ public interface NotificationService {
 
     void registerSensorNotification(Device device, String sensorType, Double value);
 
-    Optional<Notification> getLatestForDeviceBySensorType(Device device, String sensorType);
+    Notification getLatestForDeviceBySensorType(Device device, String sensorType);
 }

@@ -5,6 +5,8 @@ import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.SensorData;
 import com.hivebuddyteam.hivebuddyapplication.dto.SingleSensorDataDto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SensorDataService {
@@ -23,4 +25,7 @@ public interface SensorDataService {
 
     Boolean checkIfAlive(Device device);
 
+    List<SingleSensorDataDto> getSingleSensorDataForDeviceDay(Device device, LocalDate date, Integer sensorNumber);
+
+    List<SingleSensorDataDto> getSingleSensorDataForDeviceWithInterval(Device device, Integer sensor, LocalDateTime from, LocalDateTime to);
 }

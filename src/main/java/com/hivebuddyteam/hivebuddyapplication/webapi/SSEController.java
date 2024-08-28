@@ -36,19 +36,28 @@ public class SSEController {
     @GetMapping(value = "/subscribe") //  produces = MediaType.TEXT_EVENT_STREAM_VALUE
     public SseEmitter subscribeToUpdates(
             @RequestParam("deviceSerial") String deviceSerial,
+            @RequestParam("connectionId") String connectionId,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
+        String subscriptionName = String.format("%s-%s-%s", userDetails.getUsername(), deviceSerial, connectionId);
+
+        if (subscriptions.containsKey(subscriptionName)) {
+            return subscriptions.get(subscriptionName).getEmitter();
+        }
+
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         UpdatesSubscription subscription = new UpdatesSubscription(sseEmitter, scheduler);
         System.out.println("Subscription created!");
-        String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
 
-        if (subscriptions.containsKey(subscriptionName)) {
-            return subscriptions.get(subscriptionName).getEmitter();
-        } else {
-            subscriptions.put(subscriptionName, subscription);
-        }
+        subscriptions.put(subscriptionName, subscription);
+//        String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
+
+//        if (subscriptions.containsKey(subscriptionName)) {
+//            return subscriptions.get(subscriptionName).getEmitter();
+//        } else {
+//            subscriptions.put(subscriptionName, subscription);
+//        }
 
         sseEmitter.onCompletion(() -> {
             scheduler.shutdownNow();
@@ -67,6 +76,7 @@ public class SSEController {
             try {
                 SensorData sensorData = sensorDataService.findLatestByDevice(deviceService.findBySerial(deviceSerial));
                 SensorDataDto sensorDataDto = SensorDataDto.mapToDto(deviceSerial, sensorData);
+                sensorDataDto.setTimestamp(sensorData.getTimestamp());
                 sseEmitter.send(sensorDataDto);
                 System.out.println(String.format("Number of subs: %d, event sent to %s", subscriptions.size(), subscriptionName));
             } catch (Exception e) {
@@ -74,7 +84,7 @@ public class SSEController {
                 sseEmitter.completeWithError(e);
             }
             System.out.println("Scheduler still alive");
-        }, 5000, 1000, TimeUnit.MILLISECONDS);
+        }, 2500, 1000, TimeUnit.MILLISECONDS);
 
 
         return sseEmitter;
@@ -90,10 +100,11 @@ public class SSEController {
     @GetMapping("/unsubscribe")
     public ResponseEntity<String> unsubscribe (
             @RequestParam("deviceSerial") String deviceSerial,
+            @RequestParam("connectionId") String connectionId,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         System.out.println("Unsubscribing " + userDetails.getUsername());
-        String subscriptionName = String.format("%s-%s", userDetails.getUsername(), deviceSerial);
+        String subscriptionName = String.format("%s-%s-%s", userDetails.getUsername(), deviceSerial, connectionId);
         System.out.println("Unsubscribing " + subscriptionName);
         UpdatesSubscription subscription = subscriptions.get(subscriptionName);
 

@@ -17,7 +17,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
     List<Notification> getAllByDeviceAndCheckedIsFalse(Device device);
 
-//    Notification findTopByDeviceAndSensorTypeOrderByTimestampDesc(Device device, String sensorType);
+//    I use list here cuz when load on server is high stuttering can occur and cause creation of 2 notifications with same timestamp
     @Query("SELECT n FROM Notification n WHERE n.device = :device AND n.sensorType = :sensorType ORDER BY n.timestamp DESC")
-    Optional<Notification> findLatestByDeviceAndSensorType(@Param("device") Device device, @Param("sensorType") String sensorType);
+    List<Notification> findLatestByDeviceAndSensorType(@Param("device") Device device, @Param("sensorType") String sensorType);
 }

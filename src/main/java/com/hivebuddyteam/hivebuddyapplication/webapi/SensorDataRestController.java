@@ -7,9 +7,12 @@ import com.hivebuddyteam.hivebuddyapplication.dto.SingleSensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.service.DeviceService;
 import com.hivebuddyteam.hivebuddyapplication.service.NotificationService;
 import com.hivebuddyteam.hivebuddyapplication.service.SensorDataService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -72,6 +75,14 @@ public class SensorDataRestController {
             );
         }
 
+        if (sensorDataDto.getSensor5().doubleValue() != 0) {
+            notificationService.registerSensorNotification(
+                    device,
+                    "noise",
+                    sensorDataDto.getSensor5().doubleValue()
+            );
+        }
+
         SensorData newSensorData = sensorDataService.save(sensorDataDto);
 
         SensorDataDto newSensorDataDto = SensorDataDto.mapToDto(
@@ -130,6 +141,48 @@ public class SensorDataRestController {
         }
 
         return ResponseEntity.ok().body(dtoList);
+    }
+
+    @GetMapping("/data/device/{serial}/sensor/{sensor}")
+    public ResponseEntity<List<SingleSensorDataDto>> getDeviceSingleSensorData(
+            @PathVariable String serial,
+            @PathVariable Integer sensor,
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to
+    ) {
+        Device device = deviceService.findBySerial(serial);
+
+        if (device == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (date != null) {
+            LocalDate now = LocalDate.now();
+            if (date.isAfter(now)) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (date.isBefore(now.minusMonths(1))) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
+        if (from != null && to != null) {
+            if (from.isAfter(to)) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
+        if (date != null && from == null && to == null) {
+            List<SingleSensorDataDto> dtoList = sensorDataService.getSingleSensorDataForDeviceDay(device, date, sensor);
+            return ResponseEntity.ok().body(dtoList);
+        }
+
+        if (date != null && from != null && to != null) {
+            List<SingleSensorDataDto> dtoList = sensorDataService.getSingleSensorDataForDeviceWithInterval(device, sensor, from, to);
+            return ResponseEntity.ok().body(dtoList);
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

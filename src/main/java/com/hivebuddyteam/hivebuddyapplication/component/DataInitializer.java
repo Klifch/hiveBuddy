@@ -35,20 +35,20 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime startTime = currentTime.minusMinutes(30);
+        LocalDateTime startTime = currentTime.minusHours(7);
         Random random = new Random();
         Device device = deviceService.findById(3);
 
-        logger.info("FILLING THE DATABASE, BITCH");
+        logger.info("FILLING THE DATABASE, BOY");
 
         while (startTime.isBefore(currentTime)) {
             SensorData sensorData = new SensorData(
                     device,
                     startTime,
+                    generateRandomBigDecimal(random, 20, 33),
+                    generateRandomBigDecimal(random, 30, 40),
                     generateRandomBigDecimal(random, 10, 100),
-                    generateRandomBigDecimal(random, 10, 100),
-                    generateRandomBigDecimal(random, 10, 100),
-                    generateRandomBigDecimal(random, 10, 100),
+                    generateRandomBigDecimal(random, 0, 3),
                     generateRandomBigDecimal(random, 10, 100)
             );
 

@@ -2,12 +2,14 @@ package com.hivebuddyteam.hivebuddyapplication.service;
 
 import com.hivebuddyteam.hivebuddyapplication.domain.Device;
 import com.hivebuddyteam.hivebuddyapplication.domain.Notification;
+import com.hivebuddyteam.hivebuddyapplication.dto.SingleSensorDataDto;
 import com.hivebuddyteam.hivebuddyapplication.repository.NotificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,11 +46,12 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void registerSensorNotification(Device device, String sensorType, Double value) {
-        Optional<Notification> latestNotification = notificationRepository.findLatestByDeviceAndSensorType(device, sensorType);
-        if (latestNotification.isPresent()) {
-            LocalDateTime offset = LocalDateTime.now().minusMinutes(5);
+        List<Notification> latestNotifications = notificationRepository.findLatestByDeviceAndSensorType(device, sensorType);
+        if (!latestNotifications.isEmpty()) {
+            Notification latestNotification = latestNotifications.get(0);
+            LocalDateTime offset = LocalDateTime.now().minusMinutes(3);
 
-            if (latestNotification.get().getTimestamp().isAfter(offset)) {
+            if (latestNotification.getTimestamp().isAfter(offset)) {
                 return;
             }
         }
@@ -108,6 +111,20 @@ public class NotificationServiceImpl implements NotificationService {
                 notificationRepository.save(notification);
                 break;
 
+            case "noise":
+                notification = new Notification(
+                        device,
+                        String.format(
+                                "Device %s: Seems like there is a party in a hive!",
+                                device.getSerialNumber()
+                        ),
+                        sensorType,
+                        LocalDateTime.now(),
+                        false
+                );
+                notificationRepository.save(notification);
+                break;
+
             default:
                 throw new IllegalArgumentException("Invalid sensor type: " + sensorType);
 
@@ -115,7 +132,15 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Optional<Notification> getLatestForDeviceBySensorType(Device device, String sensorType) {
-        return notificationRepository.findLatestByDeviceAndSensorType(device, sensorType);
+    public Notification getLatestForDeviceBySensorType(Device device, String sensorType) {
+        List<Notification> notifications = notificationRepository.findLatestByDeviceAndSensorType(device, sensorType);
+
+        if (notifications.isEmpty()) {
+            return null;
+        }
+
+        notifications.sort(Comparator.comparing(Notification::getTimestamp));
+
+        return notifications.get(0);
     }
 }

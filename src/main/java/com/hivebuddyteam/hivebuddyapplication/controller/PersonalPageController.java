@@ -74,20 +74,7 @@ public class PersonalPageController {
         return "device_data2";
     }
 
-    @GetMapping("/hiveDataTest")
-    public String showHiveData(
-            @AuthenticationPrincipal UserDetails user,
-            @RequestParam("deviceId") Integer id,
-            Model model
-    ) {
-        logger.info("Received get request /showHiveData");
-
-        // some code here
-
-        return "hive_data";
-    }
-
-    // TODO: Why the fuck it is called personal home? Change it!
+    // TODO: Why tf it is called personal home?
     @GetMapping("/personalHome")
     public String showDashBoard(
             @AuthenticationPrincipal UserDetails user,

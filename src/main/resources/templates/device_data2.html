@@ -23,9 +23,12 @@
     <link rel="stylesheet" href="/assets/css/style-update-personal.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script th:src="@{/js/updateDeviceData.js}" defer></script>
-    <script th:src="@{/js/updateDeviceDataChart.js}" defer></script>
+<!--    <script th:src="@{/js/updateDeviceDataChart.js}" defer></script>-->
     <script th:src="@{/js/hiveDataUpdate.js}" defer></script>
+    <script th:src="@{/js/chartHandler.js}" defer></script>
 
 </head>
 <body>
@@ -56,6 +59,39 @@
 
 
     <input type="hidden" id="serialNumber" th:value="${theDevice.serialNumber}">
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="box text-center p-4">
+                    <div class="icon mb-2"><i class="fas fa-thermometer-half"></i></div>
+                    <div class="title">Temperature</div>
+                    <div id="sensor1" class="value">22°C</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="box text-center p-4">
+                    <div class="icon mb-2"><i class="fas fa-tint"></i></div>
+                    <div class="title">Humidity</div>
+                    <div id="sensor2" class="value">55%</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="box text-center p-4">
+                    <div class="icon mb-2"><i class="fas fa-water"></i></div>
+                    <div class="title">Water Level</div>
+                    <div id="sensor4" class="value">No water</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="box text-center p-4">
+                    <div class="icon mb-2"><i class="fas fa-volume-up"></i></div>
+                    <div class="title">Noise</div>
+                    <div id="sensor5"  class="value">Quiet</div>
+                </div>
+            </div>
+        </div>
+    </div>
 <!-- IMPORTANT OLD IMPLEMENTATION! -->
 <!--    <div class="container mt-5">-->
 <!--        <div class="row">-->
@@ -148,6 +184,9 @@
             <div class="col-md-2 text-center">
                 <button id="showOldControls" class="btn-custom w-100">Averages</button>
             </div>
+            <div class="col-md-2 text-center">
+                <button id="realTimeButton" class="btn-custom w-100">RealTime</button>
+            </div>
         </div>
 
         <div class="row">
@@ -163,11 +202,11 @@
                     <div class="col-md-12">
                         <label for="sensorSelect">For Sensor</label>
                         <select id="sensorSelect" class="form-control w-100">
-                            <option value="1" selected>Sensor 1</option>
-                            <option value="2">Sensor 2</option>
-                            <option value="3">Sensor 3</option>
-                            <option value="4">Sensor 4</option>
-                            <option value="5">Sensor 5</option>
+                            <option value="1" selected>Temperature</option>
+                            <option value="2">Humidity</option>
+<!--                            <option value="3">Sensor 3</option>-->
+                            <option value="4">Water level</option>
+                            <option value="5">Noise</option>
                         </select>
                     </div>
                 </div>
@@ -194,19 +233,21 @@
             <div id="oldControls" class="col-md-2 mt-3" style="display: none;">
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <select id="oldSensorSelect" class="form-control mb-2">
-                            <option value="all">All Sensors</option>
-                            <option value="1">Sensor 1</option>
-                            <option value="2">Sensor 2</option>
-                            <option value="3">Sensor 3</option>
-                            <option value="4">Sensor 4</option>
-                            <option value="5">Sensor 5</option>
+                        <label for="oldSensorSelect">Sensor</label>
+                        <select id="oldSensorSelect" class="form-control w-100 mb-2">
+<!--                            <option value="all">All Sensors</option>-->
+                            <option value="1">Temperature</option>
+                            <option value="2">Humidity</option>
+<!--                            <option value="3">Sensor 3</option>-->
+                            <option value="4">Water level</option>
+                            <option value="5">Noise</option>
                         </select>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <select id="timeSelect" class="form-control mb-2">
+                        <label for="timeSelect">For Period</label>
+                        <select id="timeSelect" class="form-control w-100 mb-2">
                             <option value="5">5 Minutes</option>
                             <option value="15">15 Minutes</option>
                             <option value="30">30 Minutes</option>
@@ -217,7 +258,8 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <select id="frequencySelect" class="form-control mb-2">
+                        <label for="frequencySelect">With Frequency</label>
+                        <select id="frequencySelect" class="form-control w-100 mb-2">
                             <option value="1">1 Minute</option>
                             <option value="5">5 Minutes</option>
                             <option value="15">15 Minutes</option>
@@ -231,11 +273,6 @@
                         <button id="generateButtonOld" class="btn btn-primary mb-2 w-100">Generate</button>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <button id="realTimeButtonOld" class="btn btn-primary mb-2 w-100">Real-Time</button>
-                    </div>
-                </div>
             </div>
 
             <!-- Right side: Chart -->
@@ -246,77 +283,130 @@
     </div>
 
 
-    <section class="pricing-card-area pricing-card-area2 section-padding300">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                    <div class="single-card-personal text-center mb-30">
-                        <div class="card-top">
-                            <h4>Sensor 1</h4>
-                        </div>
-                        <div class="card-mid">
-                            <h4 id="sensor1"></h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                    <div class="single-card-personal text-center mb-30">
-                        <div class="card-top">
-                            <h4>Sensor 2</h4>
-                        </div>
-                        <div class="card-mid">
-                            <h4 id="sensor2"></h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                    <div class="single-card-personal text-center mb-30">
-                        <div class="card-top">
-                            <h4>Sensor 3</h4>
-                        </div>
-                        <div class="card-mid">
-                            <h4 id="sensor3"></h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                    <div class="single-card-personal text-center mb-30">
-                        <div class="card-top">
-                            <h4>Sensor 4</h4>
-                        </div>
-                        <div class="card-mid">
-                            <h4 id="sensor4"></h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                    <div class="single-card-personal text-center mb-30">
-                        <div class="card-top">
-                            <h4>Sensor 5</h4>
-                        </div>
-                        <div class="card-mid">
-                            <h4 id="sensor5"></h4>
-                        </div>
-                        <div class="card-bottom">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">
-                    <div class="single-card-personal text-center mb-30">
-                        <div class="card-top">
-                            <h4>Want more?</h4>
-                        </div>
-                        <div class="card-mid">
-                            <h4>Click to buy!</h4>
-                        </div>
-                        <div class="card-bottom">
-                            <a id="leave" href="#" th:href="@{/}" class="borders-btn">Click!</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!--    <section class="pricing-card-area pricing-card-area2 section-padding300">-->
+<!--        <div class="container">-->
+<!--            <div class="row">-->
+<!--                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">-->
+<!--                    <div class="single-card-personal text-center mb-30">-->
+<!--                        <div class="card-top">-->
+<!--                            <h4>Sensor 1</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor1"></h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">-->
+<!--                    <div class="single-card-personal text-center mb-30">-->
+<!--                        <div class="card-top">-->
+<!--                            <h4>Sensor 2</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor2"></h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">-->
+<!--                    <div class="single-card-personal text-center mb-30">-->
+<!--                        <div class="card-top">-->
+<!--                            <h4>Sensor 3</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor3"></h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">-->
+<!--                    <div class="single-card-personal text-center mb-30">-->
+<!--                        <div class="card-top">-->
+<!--                            <h4>Sensor 4</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor4"></h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">-->
+<!--                    <div class="single-card-personal text-center mb-30">-->
+<!--                        <div class="card-top">-->
+<!--                            <h4>Sensor 5</h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor5"></h4>-->
+<!--                        </div>-->
+<!--                        <div class="card-bottom">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--&lt;!&ndash;                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-10">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="single-card-personal text-center mb-30">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="card-top">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <h4>Want more?</h4>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="card-mid">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <h4>Click to buy!</h4>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="card-bottom">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <a id="leave" href="#" th:href="@{/}" class="borders-btn">Click!</a>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
+
+<!--    <section class="pricing-card-area pricing-card-area2 section-padding300">-->
+<!--        <div class="container">-->
+<!--            <div class="row justify-content-center">-->
+<!--                &lt;!&ndash; Temperature Sensor &ndash;&gt;-->
+<!--                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">-->
+<!--                    <div class="single-card-personal text-center mb-30" style="background-color: rgba(255, 193, 7, 0.7); border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">-->
+<!--                        <div class="card-top">-->
+<!--                            <h5 style="font-weight: bold;"><i class="fas fa-thermometer-half"></i> Temperature</h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor1" style="margin-top: 10px;">30.1</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Humidity Sensor &ndash;&gt;-->
+<!--                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">-->
+<!--                    <div class="single-card-personal text-center mb-30" style="background-color: rgba(255, 193, 7, 0.7); border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">-->
+<!--                        <div class="card-top">-->
+<!--                            <h5 style="font-weight: bold;"><i class="fas fa-tint"></i> Humidity</h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor2" style="margin-top: 10px;">39.2</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Water Level Sensor &ndash;&gt;-->
+<!--                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">-->
+<!--                    <div class="single-card-personal text-center mb-30" style="background-color: rgba(255, 193, 7, 0.7); border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">-->
+<!--                        <div class="card-top">-->
+<!--                            <h5 style="font-weight: bold;"><i class="fas fa-water"></i> Water Level</h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor4" style="margin-top: 10px;">$0.21</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; Noise Sensor &ndash;&gt;-->
+<!--                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">-->
+<!--                    <div class="single-card-personal text-center mb-30" style="background-color: rgba(255, 193, 7, 0.7); border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">-->
+<!--                        <div class="card-top">-->
+<!--                            <h5 style="font-weight: bold;"><i class="fas fa-volume-up"></i> Noise</h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-mid">-->
+<!--                            <h4 id="sensor5" style="margin-top: 10px;">$0.21</h4>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
+
+
 
 
 </main>
